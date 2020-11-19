@@ -12,38 +12,38 @@ const BASIC_LIST_COUNT = 5;
 const TOP_RATED_COUNT = 2;
 const MOST_COMMENTED_COUNT = 2;
 
-const render = (container, template, place) => {
+const render = (container, template, place = `beforeend`) => {
   container.insertAdjacentHTML(place, template);
 };
 
 const siteHeaderElement = document.querySelector(`.header`);
 const siteMainElement = document.querySelector(`.main`);
-render(siteHeaderElement, createUserTitlteTemplate(), `beforeend`);
-render(siteMainElement, createMainNavigationTemplate(), `beforeend`);
-render(siteMainElement, createSortFilterTemplate(), `beforeend`);
+render(siteHeaderElement, createUserTitlteTemplate());
+render(siteMainElement, createMainNavigationTemplate());
+render(siteMainElement, createSortFilterTemplate());
 
-render(siteMainElement, createFilmListTemplate(), `beforeend`);
+render(siteMainElement, createFilmListTemplate());
 const filmsBlock = document.querySelector(`.films`);
 const filmListElement = filmsBlock.querySelector(`.films-list`);
 const filmsListElementContainer = filmsBlock.querySelector(`.films-list__container`);
 for (let i = 0; i < BASIC_LIST_COUNT; i++) {
-  render(filmsListElementContainer, createFilmCardTemplate(), `beforeend`);
+  render(filmsListElementContainer, createFilmCardTemplate());
 }
 
-render(filmListElement, createShowMoreButtonTemplate(), `beforeend`);
+render(filmListElement, createShowMoreButtonTemplate());
 
-render(filmsBlock, createTopRatedFilmsTemplate(), `beforeend`);
+render(filmsBlock, createTopRatedFilmsTemplate());
 const topRatedFilmList = filmsBlock.querySelector(`.films-list:nth-child(2) .films-list__container`);
 for (let i = 0; i < TOP_RATED_COUNT; i++) {
-  render(topRatedFilmList, createFilmCardTemplate(), `beforeend`);
+  render(topRatedFilmList, createFilmCardTemplate());
 }
 
-render(filmsBlock, createMostCommentedListTemplate(), `beforeend`);
+render(filmsBlock, createMostCommentedListTemplate());
 const mostCommentedFilmList = filmsBlock.querySelector(`.films-list:nth-child(3) .films-list__container`);
 for (let i = 0; i < MOST_COMMENTED_COUNT; i++) {
-  render(mostCommentedFilmList, createFilmCardTemplate(), `beforeend`);
+  render(mostCommentedFilmList, createFilmCardTemplate());
 }
 
 const bodyElement = document.querySelector(`body`);
-render(bodyElement, createFilmDetailsTemplate(), `beforeend`);
+render(bodyElement, createFilmDetailsTemplate());
 
