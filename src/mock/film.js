@@ -1,77 +1,138 @@
 import dayjs from 'dayjs';
 import {generateComment} from './comments.js';
-import {getRandomInteger, getRandomFloat} from '../utils.js';
+import {getRandomInteger, getRandomFloat, getRandomIndexRange} from '../utils.js';
 
-const generateTitlte = () => {
-  const titles = [
-    `The Man with the Golden Arm`,
-    `The Great Flamarion`,
-    `Santa Claus Conquers the Martians`,
-    `Made for Each Other`,
-    `The Dance of Life`,
-    `Sagebrush Trail`,
-    `Popeye the Sailor Meets Sindbad the Sailor`,
-  ];
+const TITLES = [
+  `The Man with the Golden Arm`,
+  `The Great Flamarion`,
+  `Santa Claus Conquers the Martians`,
+  `Made for Each Other`,
+  `The Dance of Life`,
+  `Sagebrush Trail`,
+  `Popeye the Sailor Meets Sindbad the Sailor`,
+];
 
-  const randomIndex = getRandomInteger(0, titles.length - 1);
-  return titles[randomIndex];
+const POSTERS = [
+  `made-for-each-other.png`,
+  `popeye-meets-sinbad.png`,
+  `sagebrush-trail.jpg`,
+  `santa-claus-conquers-the-martians.jpg`,
+  `the-dance-of-life.jpg`,
+  `the-great-flamarion.jpg`,
+  `the-man-with-the-golden-arm.jpg`,
+];
+
+const FILM_RATING = {
+  MIN: 0.0,
+  MAX: 10.0
+};
+
+const FILM_YEAR = {
+  MIN: 1900,
+  MAX: 2020
+};
+
+const HOUR = 60;
+
+const FILM_DURATION = {
+  MIN: 90,
+  MAX_DURATION: 260
+};
+
+const GENRES = [
+  `Musical`,
+  `Cartoon`,
+  `Comedy`,
+  `Drama`,
+  `Western`,
+  `Mystery`,
+];
+
+const DESCRIPTIONS = [
+  `Lorem ipsum dolor sit amet, consectetur adipiscing elit.`,
+  `Cras aliquet varius magna, non porta ligula feugiat eget.`,
+  `Fusce tristique felis at fermentum pharetra. Aliquam id orci ut lectus varius viverra.`,
+  `Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante.`,
+  `Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum.`,
+  `Sed blandit, eros vel aliquam faucibus, purus ex euismod diam, eu luctus nunc ante ut dui.`,
+  `Sed sed nisi sed augue convallis suscipit in sed felis. Aliquam erat volutpat. Nunc fermentum tortor ac porta dapibus.`,
+  `In rutrum ac purus sit amet tempus.`,
+];
+
+const DIRECTORS = [
+  `Woody Allen`,
+  `Tim Burton`,
+  `James Cameron`,
+  `John Ford`,
+  `Stanley Kubrick`,
+  `George Lucas`,
+];
+
+const WRITERS = [
+  `Quentin Tarantino`,
+  `Francis Ford Coppola`,
+  `William Goldman`,
+  `Charlie Kaufman`,
+  `Woody Allen`,
+];
+
+const ACTORS = [
+  `Jack Nicholson`,
+  `Marlon Brando`,
+  `Robert De Niro`,
+  `Al Pacino`,
+  `Daniel Day-Lewis`,
+  `Dustin Hoffman`,
+  `Tom Hanks`,
+  `Anthony Hopkins`,
+  `Paul Newman`,
+  `Denzel Washington`,
+];
+
+const GAPS = {
+  MAX_DAYS: 365,
+  MAX_YEARS: 20,
+  MAX_MONTHS: 12
+};
+
+const COUNTRIES = [
+  `USA`,
+  `UK`,
+  `CANADA`,
+  `GERMAN`,
+  `ITALY`,
+  `SPAIN`,
+  `WONDERLAND`
+];
+
+const generateTitle = () => {
+  return getRandomIndexRange(0, TITLES);
 };
 
 const generatePoster = () => {
-  const posters = [
-    `made-for-each-other.png`,
-    `popeye-meets-sinbad.png`,
-    `sagebrush-trail.jpg`,
-    `santa-claus-conquers-the-martians.jpg`,
-    `the-dance-of-life.jpg`,
-    `the-great-flamarion.jpg`,
-    `the-man-with-the-golden-arm.jpg`,
-  ];
-
-  const randomIndex = getRandomInteger(0, posters.length - 1);
-  return posters[randomIndex];
+  return getRandomIndexRange(0, POSTERS);
 };
 
 const generateRating = () => {
-  const MIN_RATING = 0.0;
-  const MAX_RATING = 10.0;
-
-  return getRandomFloat(MIN_RATING, MAX_RATING).toFixed(1);
+  return getRandomFloat(FILM_RATING.MIN, FILM_RATING.MAX).toFixed(1);
 };
 
 const generateYear = () => {
-  const MIN_YEAR = 1900;
-  const MAX_YEAR = 2020;
-
-  return getRandomInteger(MIN_YEAR, MAX_YEAR);
+  return getRandomInteger(FILM_YEAR.MIN, FILM_YEAR.MAX);
 };
 
 const generateDuration = () => {
-  const HOUR = 60;
-  const MIN_DURATION = 90;
-  const MAX_DURATION = 260;
-
-  const hour = Math.floor(getRandomInteger(MIN_DURATION, MAX_DURATION) / HOUR);
-  const minutes = Math.floor(getRandomInteger(MIN_DURATION, MAX_DURATION)) % HOUR;
+  const hour = Math.floor(getRandomInteger(FILM_DURATION.MIN, FILM_DURATION.MAX) / HOUR);
+  const minutes = Math.floor(getRandomInteger(FILM_DURATION.MIN, FILM_DURATION.MAX)) % HOUR;
 
   return `${hour}h ${minutes}m`;
 };
 
 const generateGenre = () => {
-  const genres = [
-    `Musical`,
-    `Cartoon`,
-    `Comedy`,
-    `Drama`,
-    `Western`,
-    `Mystery`,
-  ];
-
   const randomArrayNumber = getRandomInteger(1, 3);
 
   const getRandomGenre = () => {
-    const randomIndex = getRandomInteger(0, genres.length - 1);
-    return genres[randomIndex];
+    return getRandomIndexRange(0, GENRES);
   };
 
   const randomGenreList = new Array(randomArrayNumber).fill()
@@ -81,23 +142,10 @@ const generateGenre = () => {
 };
 
 const generateDescription = () => {
-  const descriptions = [
-    `Lorem ipsum dolor sit amet, consectetur adipiscing elit.`,
-    `Cras aliquet varius magna, non porta ligula feugiat eget.`,
-    `Fusce tristique felis at fermentum pharetra. Aliquam id orci ut lectus varius viverra.`,
-    `Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante.`,
-    `Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum.`,
-    `Sed blandit, eros vel aliquam faucibus, purus ex euismod diam, eu luctus nunc ante ut dui.`,
-    `Sed sed nisi sed augue convallis suscipit in sed felis. Aliquam erat volutpat. Nunc fermentum tortor ac porta dapibus.`,
-    `In rutrum ac purus sit amet tempus.`,
-  ];
-
   let description = ``;
 
-  const randomIndex = getRandomInteger(0, descriptions.length - 1);
-
   for (let i = 0; i < getRandomInteger(1, 5); i++) {
-    description += descriptions[randomIndex];
+    description += getRandomIndexRange(0, DESCRIPTIONS);
   }
   return description;
 };
@@ -113,33 +161,14 @@ const generateCommentsList = () => {
 };
 
 const generateFilmDirector = () => {
-  const directors = [
-    `Woody Allen`,
-    `Tim Burton`,
-    `James Cameron`,
-    `John Ford`,
-    `Stanley Kubrick`,
-    `George Lucas`,
-  ];
-
-  const randomIndex = getRandomInteger(0, directors.length - 1);
-  return directors[randomIndex];
+  return getRandomIndexRange(0, DIRECTORS);
 };
 
 const generateFilmWriters = () => {
-  const writers = [
-    `Quentin Tarantino`,
-    `Francis Ford Coppola`,
-    `William Goldman`,
-    `Charlie Kaufman`,
-    `Woody Allen`,
-  ];
-
-  const randomArrayNumber = getRandomInteger(1, writers.length - 1);
+  const randomArrayNumber = getRandomInteger(1, WRITERS.length - 1);
 
   const getRandomWriter = () => {
-    const randomIndex = getRandomInteger(0, writers.length - 1);
-    return writers[randomIndex];
+    return getRandomIndexRange(0, WRITERS);
   };
 
   const randomWriterList = new Array(randomArrayNumber).fill()
@@ -149,25 +178,11 @@ const generateFilmWriters = () => {
 };
 
 const generateFilmActors = () => {
-  const actors = [
-    `Jack Nicholson`,
-    `Marlon Brando`,
-    `Robert De Niro`,
-    `Al Pacino`,
-    `Daniel Day-Lewis`,
-    `Dustin Hoffman`,
-    `Tom Hanks`,
-    `Anthony Hopkins`,
-    `Paul Newman`,
-    `Denzel Washington`,
-  ];
-
   const getRandomActor = () => {
-    const randomIndex = getRandomInteger(0, actors.length - 1);
-    return actors[randomIndex];
+    return getRandomIndexRange(0, ACTORS);
   };
 
-  const randomArrayNumber = getRandomInteger(1, actors.length - 1);
+  const randomArrayNumber = getRandomInteger(1, ACTORS.length - 1);
 
   const randomActorList = new Array(randomArrayNumber).fill()
     .map(getRandomActor);
@@ -176,34 +191,15 @@ const generateFilmActors = () => {
 };
 
 const generateRandomDate = () => {
-  const maxDaysGap = 365;
-  const maxYearGap = 20;
-  const maxMonthGap = 12;
-
-  const daysGap = getRandomInteger(-maxDaysGap, 0);
-  const yearGap = getRandomInteger(-maxYearGap, 0);
-  const monthGap = getRandomInteger(-maxMonthGap, 0);
-
-  const theDate = dayjs().add(daysGap, `day`)
-    .add(yearGap, `year`)
-    .add(monthGap, `month`);
+  const theDate = dayjs().add(getRandomInteger(-GAPS.MAX_DAYS, 0), `day`)
+    .add(getRandomInteger(-GAPS.MAX_YEARS, 0), `year`)
+    .add(getRandomInteger(-GAPS.MAX_MONTHS, 0), `month`);
 
   return theDate.toDate();
 };
 
 const generateCountry = () => {
-  const countries = [
-    `USA`,
-    `UK`,
-    `CANADA`,
-    `GERMAN`,
-    `ITALY`,
-    `SPAIN`,
-    `WONDERLAND`
-  ];
-
-  const randomIndex = getRandomInteger(0, countries.length - 1);
-  return countries[randomIndex];
+  return getRandomIndexRange(0, COUNTRIES);
 };
 
 const generatePgRating = () => {
@@ -212,8 +208,8 @@ const generatePgRating = () => {
 
 export const generateFilm = () => {
   return {
-    title: generateTitlte(),
-    originalTitle: generateTitlte(),
+    title: generateTitle(),
+    originalTitle: generateTitle(),
     director: generateFilmDirector(),
     writers: generateFilmWriters(),
     actors: generateFilmActors(),

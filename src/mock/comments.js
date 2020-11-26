@@ -1,48 +1,35 @@
 import dayjs from 'dayjs';
+import {getRandomIndexRange, getRandomInteger} from '../utils.js';
 
-const getRandomInteger = (a = 0, b = 1) => {
-  const lower = Math.ceil(Math.min(a, b));
-  const upper = Math.floor(Math.max(a, b));
+const AUTHORS = [
+  `Tim Macoveev`,
+  `John Doe`,
+  `Big Boss`
+];
 
-  return Math.floor(lower + Math.random() * (upper - lower + 1));
+const COMMENT_TEXT = [
+  `Interesting setting and a good cast`,
+  `Booooooooooring`,
+  `Very very old. Meh`,
+  `Almost two hours? Seriously?`
+];
+
+const EMOJIS = [
+  `smile`,
+  `sleeping`,
+  `puke`,
+  `angry`
+];
+
+const GAPS = {
+  MAX_DAYS: 365,
+  MAX_YEARS: 20,
+  MAX_MONTHS: 12,
+  MAX_HOURS: 12,
+  MAX_MINUTES: 40
 };
 
-const generateAuthor = () => {
-  const authors = [
-    `Tim Macoveev`,
-    `John Doe`,
-    `Big Boss`
-  ];
-
-  const randomIndex = getRandomInteger(0, authors.length - 1);
-  return authors[randomIndex];
-};
-
-const generateCommentText = () => {
-  const commentText = [
-    `Interesting setting and a good cast`,
-    `Booooooooooring`,
-    `Very very old. Meh`,
-    `Almost two hours? Seriously?`
-  ];
-
-  const randomIndex = getRandomInteger(0, commentText.length - 1);
-  return commentText[randomIndex];
-};
-
-const generateEmoji = () => {
-  const emojis = [
-    `smile`,
-    `sleeping`,
-    `puke`,
-    `angry`
-  ];
-
-  const randomIndex = getRandomInteger(0, emojis.length - 1);
-  return emojis[randomIndex];
-};
-
-const emojiList = () => {
+const EMOJI_LIST = () => {
   return [
     `smile`,
     `sleeping`,
@@ -51,36 +38,32 @@ const emojiList = () => {
   ];
 };
 
+const generateAuthor = () => {
+  return getRandomIndexRange(0, AUTHORS);
+};
+
+const generateCommentText = () => {
+  return getRandomIndexRange(0, COMMENT_TEXT);
+};
+
+const generateEmoji = () => {
+  return getRandomIndexRange(0, EMOJIS);
+};
+
 const generateDate = () => {
-  const maxDaysGap = 365;
-  const maxYearGap = 20;
-  const maxMonthGap = 12;
-
-  const maxHours = 12;
-  const maxMinutes = 40;
-
-  const daysGap = getRandomInteger(-maxDaysGap, 0);
-  const yearGap = getRandomInteger(-maxYearGap, 0);
-  const monthGap = getRandomInteger(-maxMonthGap, 0);
-  const hourGap = getRandomInteger(-maxHours, 0);
-  const minuteGap = getRandomInteger(-maxMinutes, 0);
-
-  const theDate = dayjs().add(daysGap, `day`)
-    .add(yearGap, `year`)
-    .add(monthGap, `month`)
-    .add(hourGap, `hour`)
-    .add(minuteGap, `minute`);
-
+  const theDate = dayjs().add(getRandomInteger(-GAPS.MAX_DAYS, 0), `day`)
+    .add(getRandomInteger(-GAPS.MAX_YEARS, 0), `year`)
+    .add(getRandomInteger(-GAPS.MAX_MONTHS, 0), `month`)
+    .add(getRandomInteger(-GAPS.MAX_HOURS, 0), `hour`)
+    .add(getRandomInteger(-GAPS.MAX_MINUTES, 0), `minute`);
 
   return theDate.toDate();
 };
 
-export const generateComment = () => {
-  return {
-    author: generateAuthor(),
-    commentText: generateCommentText(),
-    emoji: generateEmoji(),
-    emojiList,
-    date: generateDate()
-  };
-};
+export const generateComment = () => ({
+  author: generateAuthor(),
+  commentText: generateCommentText(),
+  emoji: generateEmoji(),
+  EMOJI_LIST,
+  date: generateDate()
+});

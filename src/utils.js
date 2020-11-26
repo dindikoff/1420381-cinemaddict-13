@@ -13,15 +13,16 @@ export const getRandomFloat = (a = 1, b = 0) => {
   return lower + Math.random() * (upper - lower);
 };
 
-export const humanizeReleaseDate = (releaseDate) => {
+export const formatReleaseDate = (releaseDate) => {
   return dayjs(releaseDate).format(`DD MMMM YYYY`);
 };
 
-export const humanizeCommentDate = (commentDate) => {
+export const formatCommentDate = (commentDate) => {
   return dayjs(commentDate).format(`YYYY/M/D HH:MM`);
 };
 
-// export const topRateFilmsFilter = (films) => {
-//   const topFilms = films.sort((a, b) => parseFloat(a.rating) - parseFloat(b.rating));
-//   return [topFilms[topFilms.length - 1], topFilms[topFilms.length - 2]];
-// };
+export const getRandomIndexRange = (from, array) => {
+  const randomIndex = getRandomInteger(from, array.length - 1);
+
+  return array[randomIndex];
+};

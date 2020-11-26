@@ -11,12 +11,12 @@ import {createFilmDetailsTemplate} from './view/film-details.js';
 import {generateFilm} from './mock/film.js';
 import {generateFilter} from './mock/filter.js';
 
-const footerStatistic = document.querySelector(`.footer__statistics`);
-
 const FILM_LIST_COUNT = 20;
 const FILM_LIST_COUNT_STEP = 5;
 const TOP_RATED_COUNT = 2;
 const MOST_COMMENTED_COUNT = 2;
+
+const footerStatistic = document.querySelector(`.footer__statistics`);
 
 const films = new Array(FILM_LIST_COUNT).fill().map(generateFilm);
 const filters = generateFilter(films);
