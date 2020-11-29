@@ -1,4 +1,4 @@
-import {formatReleaseDate, formatCommentDate} from '../utils.js';
+import {formatReleaseDate, formatCommentDate, createElement} from '../utils.js';
 
 const generateCommentTemplate = (comment) => {
   return (`
@@ -62,7 +62,7 @@ const generateCommentsBlockTemplate = (comments) => {
   `);
 };
 
-export const createFilmDetailsTemplate = (film) => {
+const createFilmDetailsTemplate = (film) => {
   const {
     title, originalTitle,
     director, writers,
@@ -88,8 +88,7 @@ export const createFilmDetailsTemplate = (film) => {
 
   const commentsBlock = generateCommentsBlockTemplate(comments);
 
-  return (`
-    <section class="film-details">
+  return (`<section class="film-details">
     <form class="film-details__inner" action="" method="get">
       <div class="film-details__top-container">
         <div class="film-details__close">
@@ -160,6 +159,27 @@ export const createFilmDetailsTemplate = (film) => {
         ${commentsBlock}
       </div>
     </form>
-    </section>
-    `);
+    </section>`);
 };
+
+export default class FilmDetails {
+  constructor(film) {
+    this._film = film;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createFilmDetailsTemplate(this._film);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
