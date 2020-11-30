@@ -1,4 +1,4 @@
-import {createElement} from "../utils";
+import {createElement} from "../dom-utils";
 
 const createFilmCardTemplate = (film) => {
   const SHORT_DESCRIPTION_MAX_LETTERS = 140;
@@ -16,7 +16,8 @@ const createFilmCardTemplate = (film) => {
       : description;
   };
 
-  return (`<article class="film-card">
+  return (`
+    <article class="film-card">
       <h3 class="film-card__title">${title}</h3>
       <p class="film-card__rating">${rating}</p>
       <p class="film-card__info">
@@ -32,7 +33,8 @@ const createFilmCardTemplate = (film) => {
         <button class="film-card__controls-item button film-card__controls-item--mark-as-watched" type="button">Mark as watched</button>
         <button class="film-card__controls-item button film-card__controls-item--favorite" type="button">Mark as favorite</button>
       </div>
-    </article>`);
+    </article>
+  `).trim();
 };
 
 export default class FilmCard {

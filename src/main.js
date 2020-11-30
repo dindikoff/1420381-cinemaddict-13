@@ -5,11 +5,11 @@ import FilmListView from './view/film-list.js';
 import FilmCardView from './view/film-card.js';
 import ShowMoreButtonView from './view/show-more-button.js';
 import FilmDetailsView from "./view/film-details.js";
-import {render} from './utils.js';
+import {KEY} from './utils.js';
+import {render} from './dom-utils.js';
 
 import {generateFilm} from './mock/film.js';
 import {generateFilter} from './mock/filter.js';
-
 
 const FILM_LIST_COUNT = 20;
 const FILM_LIST_COUNT_STEP = 5;
@@ -34,48 +34,34 @@ const renderFilm = (filmListElement, film) => {
   const filmComments = filmComponent.getElement().querySelector(`.film-card__comments`);
 
   const onEscKeyDown = (evt) => {
-    if (evt.key === `Escape` || evt.key === `Esc`) {
-      evt.preventDefault();
-      onCloseModal();
+    if (evt.key === KEY.ESC) {
+      onCloseModal(evt);
       document.removeEventListener(`keydown`, onEscKeyDown);
     }
   };
 
-  const onShowModal = () => {
+  const onShowModal = (evt) => {
+    evt.preventDefault();
     const closeButton = filmDetails.getElement().querySelector(`.film-details__close-btn`);
-
-    closeButton.addEventListener(`click`, (evt) => {
-      evt.preventDefault();
-      onCloseModal();
-    });
+    closeButton.addEventListener(`click`, onCloseModal);
 
     document.body.classList.add(`hide-overflow`);
 
-    render(document.querySelector(`body`), filmDetails.getElement());
+    render(document.body, filmDetails.getElement());
     document.addEventListener(`keydown`, onEscKeyDown);
   };
 
-  const onCloseModal = () => {
+  const onCloseModal = (evt) => {
+    evt.preventDefault();
     filmDetails.getElement().remove(filmDetails.getElement());
     filmDetails.removeElement();
     document.body.classList.remove(`hide-overflow`);
     document.removeEventListener(`keydown`, onEscKeyDown);
   };
 
-  filmPoster.addEventListener(`click`, (evt) => {
-    evt.preventDefault();
-    onShowModal();
-  });
-
-  filmTitle.addEventListener(`click`, (evt) => {
-    evt.preventDefault();
-    onShowModal();
-  });
-
-  filmComments.addEventListener(`click`, (evt) => {
-    evt.preventDefault();
-    onShowModal();
-  });
+  filmPoster.addEventListener(`click`, onShowModal);
+  filmTitle.addEventListener(`click`, onShowModal);
+  filmComments.addEventListener(`click`, onShowModal);
 
   render(filmListElement, filmComponent.getElement());
 };

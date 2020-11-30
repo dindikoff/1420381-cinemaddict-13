@@ -1,4 +1,4 @@
-import {createElement} from "../utils.js";
+import {createElement} from "../dom-utils.js";
 
 const createMainNavigationItemTemplate = ({name, count}) => {
   return (`
@@ -11,13 +11,15 @@ const createMainNavigationItemTemplate = ({name, count}) => {
 const createMainNavigationTemplate = (filtersItem) => {
   const mainNavigationItemTemplate = filtersItem.map(createMainNavigationItemTemplate).join(``);
 
-  return (`<nav class="main-navigation">
+  return (`
+    <nav class="main-navigation">
       <div class="main-navigation__items">
         <a href="#all" class="main-navigation__item">All movies</a>
         ${mainNavigationItemTemplate}
       </div>
       <a href="#stats" class="main-navigation__additional">Stats</a>
-    </nav>`);
+    </nav>
+  `).trim();
 };
 
 export default class Navigation {
