@@ -1,4 +1,6 @@
-export const createFilmCardTemplate = (film) => {
+import {createElement} from "../dom-utils";
+
+const createFilmCardTemplate = (film) => {
   const SHORT_DESCRIPTION_MAX_LETTERS = 140;
 
   const {
@@ -32,5 +34,27 @@ export const createFilmCardTemplate = (film) => {
         <button class="film-card__controls-item button film-card__controls-item--favorite" type="button">Mark as favorite</button>
       </div>
     </article>
-    `);
+  `).trim();
 };
+
+export default class FilmCard {
+  constructor(film) {
+    this._film = film;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createFilmCardTemplate(this._film);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
