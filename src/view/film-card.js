@@ -1,4 +1,4 @@
-import {createElement} from "../dom-utils";
+import {createElement} from "../utils/dom";
 
 const createFilmCardTemplate = (film) => {
   const SHORT_DESCRIPTION_MAX_LETTERS = 140;

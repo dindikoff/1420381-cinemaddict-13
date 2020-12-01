@@ -1,21 +1,20 @@
 import {createElement} from "../utils/dom.js";
 
-const createTopRatedFilmsTemplate = () => {
+const createFilmListEmptyTemplate = () => {
   return (`
-    <section class="films-list films-list--extra">
-      <h2 class="films-list__title">Top rated</h2>
-      <div class="films-list__container"></div>
+    <section class="films-list">
+      <h2 class="films-list__title">There are no movies in our database</h2>
     </section>
   `).trim();
 };
 
-export default class TopRatedList {
+export default class EmptyList {
   constructor() {
     this._element = null;
   }
 
   getTemplate() {
-    return createTopRatedFilmsTemplate();
+    return createFilmListEmptyTemplate();
   }
 
   getElement() {
@@ -29,3 +28,5 @@ export default class TopRatedList {
     this._element = null;
   }
 }
+
+

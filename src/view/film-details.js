@@ -1,5 +1,5 @@
-import {formatReleaseDate, formatCommentDate} from '../utils.js';
-import {createElement} from '../dom-utils.js';
+import {formatReleaseDate, formatCommentDate} from '../utils/common.js';
+import {createElement} from '../utils/dom.js';
 
 const generateCommentTemplate = (comment) => {
   return (`
