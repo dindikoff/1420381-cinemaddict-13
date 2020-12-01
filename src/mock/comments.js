@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import {getRandomIndexRange, getRandomInteger} from '../utils.js';
+import {getRandomIndexRange, getRandomInteger} from '../utils/common.js';
 
 const AUTHORS = [
   `Tim Macoveev`,

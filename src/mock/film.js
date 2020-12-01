@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 import {generateComment} from './comments.js';
-import {getRandomInteger, getRandomFloat, getRandomIndexRange} from '../utils.js';
+import {getRandomInteger, getRandomFloat, getRandomIndexRange} from '../utils/common.js';
 
 const TITLES = [
   `The Man with the Golden Arm`,
