@@ -1,5 +1,5 @@
+import AbstractView from "./abstract.js";
 import {formatReleaseDate, formatCommentDate} from '../utils/common.js';
-import {createElement} from '../utils/dom.js';
 
 const generateCommentTemplate = (comment) => {
   return (`
@@ -164,24 +164,27 @@ const createFilmDetailsTemplate = (film) => {
     </section>`).trim();
 };
 
-export default class FilmDetails {
+export default class FilmDetails extends AbstractView {
   constructor(film) {
+    super();
     this._film = film;
-    this._element = null;
+    this._closeClickHandler = this._closeClickHandler.bind(this);
   }
 
   getTemplate() {
     return createFilmDetailsTemplate(this._film);
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-    return this._element;
+  _closeClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.click();
   }
 
-  removeElement() {
-    this._element = null;
+
+  setCloseClickHandler(cb) {
+    this._callback.click = cb;
+    this.getElement().querySelector(`.film-details__close-btn`)
+      .addEventListener(`click`, this._closeClickHandler);
   }
+
 }

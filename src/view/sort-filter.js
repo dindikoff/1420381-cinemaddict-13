@@ -1,4 +1,4 @@
-import {createElement} from "../utils/dom.js";
+import AbstractView from "./abstract.js";
 
 const createSortFilterTemplate = () => {
   return (`
@@ -10,23 +10,8 @@ const createSortFilterTemplate = () => {
   `).trim();
 };
 
-export default class Sort {
-  constructor() {
-    this._element = null;
-  }
-
+export default class Sort extends AbstractView {
   getTemplate() {
     return createSortFilterTemplate();
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

@@ -28,10 +28,6 @@ const renderFilm = (filmListElement, film) => {
   const filmComponent = new FilmCardView(film);
   const filmDetails = new FilmDetailsView(film);
 
-  const filmPoster = filmComponent.getElement().querySelector(`.film-card__poster`);
-  const filmTitle = filmComponent.getElement().querySelector(`.film-card__title`);
-  const filmComments = filmComponent.getElement().querySelector(`.film-card__comments`);
-
   const onEscKeyDown = (evt) => {
     if (isEscape(evt)) {
       onCloseModal(evt);
@@ -39,28 +35,24 @@ const renderFilm = (filmListElement, film) => {
     }
   };
 
-  const onShowModal = (evt) => {
-    evt.preventDefault();
-    const closeButton = filmDetails.getElement().querySelector(`.film-details__close-btn`);
-    closeButton.addEventListener(`click`, onCloseModal);
-
+  const onShowModal = () => {
+    filmDetails.setCloseClickHandler(onCloseModal);
+    document.addEventListener(`keydown`, onEscKeyDown);
     document.body.classList.add(`hide-overflow`);
 
     render(document.body, filmDetails.getElement());
-    document.addEventListener(`keydown`, onEscKeyDown);
   };
 
-  const onCloseModal = (evt) => {
-    evt.preventDefault();
+  const onCloseModal = () => {
     filmDetails.getElement().remove(filmDetails.getElement());
     filmDetails.removeElement();
     document.body.classList.remove(`hide-overflow`);
     document.removeEventListener(`keydown`, onEscKeyDown);
   };
 
-  filmPoster.addEventListener(`click`, onShowModal);
-  filmTitle.addEventListener(`click`, onShowModal);
-  filmComments.addEventListener(`click`, onShowModal);
+  filmComponent.setFilmPosterClickHandler(onShowModal);
+  filmComponent.setFilmTitleClickHandler(onShowModal);
+  filmComponent.setFilmCommentsClickHandler(onShowModal);
 
   render(filmListElement, filmComponent.getElement());
 };
@@ -86,7 +78,7 @@ const renderList = (filmsContainer, filmList) => {
       const showMoreButton = new ShowMoreButtonView();
       render(filmsListComponent.getElement(), showMoreButton.getElement());
 
-      showMoreButton.getElement().addEventListener(`click`, () => {
+      showMoreButton.setClickHandler(() => {
         films.slice(renderTemplateFilmsCount, renderTemplateFilmsCount + FILM_LIST_COUNT_STEP)
           .forEach((film) => renderFilm(filmsListElementContainer, film));
         renderTemplateFilmsCount += FILM_LIST_COUNT_STEP;

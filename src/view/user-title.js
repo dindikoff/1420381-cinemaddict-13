@@ -1,5 +1,5 @@
-import {createElement} from '../utils/dom.js';
-
+// import {createElement} from '../utils/dom.js';
+import AbstractView from './abstract.js';
 const createUserTitleTemplate = () => {
   return (`
     <section class="header__profile profile">
@@ -9,23 +9,8 @@ const createUserTitleTemplate = () => {
   `).trim();
 };
 
-export default class UserTitle {
-  constructor() {
-    this._element = null;
-  }
-
+export default class UserTitle extends AbstractView {
   getTemplate() {
     return createUserTitleTemplate();
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }
