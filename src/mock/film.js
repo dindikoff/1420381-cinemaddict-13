@@ -206,8 +206,11 @@ const generatePgRating = () => {
   return getRandomInteger(0, 18);
 };
 
+const generateId = () => Date.now() + parseInt(Math.random() * 10000, 10);
+
 export const generateFilm = () => {
   return {
+    id: generateId(),
     title: generateTitle(),
     originalTitle: generateTitle(),
     director: generateFilmDirector(),
