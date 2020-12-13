@@ -44,6 +44,10 @@ export default class FilmCard extends AbstractView {
     this._posterClickHandler = this._posterClickHandler.bind(this);
     this._titleClickHandler = this._titleClickHandler.bind(this);
     this._commentsClickHandler = this._commentsClickHandler.bind(this);
+
+    this._watchListClickHandler = this._watchListClickHandler.bind(this);
+    this._asWatchedClickHandler = this._asWatchedClickHandler.bind(this);
+    this._favoriteClickHandler = this._favoriteClickHandler.bind(this);
   }
 
   getTemplate() {
@@ -65,6 +69,21 @@ export default class FilmCard extends AbstractView {
     this._callback.commentsClick();
   }
 
+  _watchListClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.watchList();
+  }
+
+  _asWatchedClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.asWatched();
+  }
+
+  _favoriteClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.favorite();
+  }
+
   setFilmPosterClickHandler(cb) {
     this._callback.posterClick = cb;
     this.getElement().querySelector(`.film-card__poster`).addEventListener(`click`, this._posterClickHandler);
@@ -76,7 +95,26 @@ export default class FilmCard extends AbstractView {
 
   setFilmCommentsClickHandler(cb) {
     this._callback.commentsClick = cb;
-    this.getElement().querySelector(`.film-card__comments`).addEventListener(`click`, this._commentsClickHandler);
+    this.getElement().querySelector(`.film-card__comments`)
+      .addEventListener(`click`, this._commentsClickHandler);
+  }
+
+  setFilmWatchListClickHandler(cb) {
+    this._callback.watchList = cb;
+    this.getElement().querySelector(`.film-card__controls-item--add-to-watchlist`)
+      .addEventListener(`click`, this._watchListClickHandler);
+  }
+
+  setFilmAsWatchedClickHandler(cb) {
+    this._callback.asWatched = cb;
+    this.getElement().querySelector(`.film-card__controls-item--mark-as-watched`)
+      .addEventListener(`click`, this._asWatchedClickHandler);
+  }
+
+  setFilmFavoriteClickHandler(cb) {
+    this._callback.favorite = cb;
+    this.getElement().querySelector(`.film-card__controls-item--favorite`)
+      .addEventListener(`click`, this._favoriteClickHandler);
   }
 
 }
