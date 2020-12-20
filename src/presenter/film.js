@@ -44,10 +44,6 @@ export default class Film {
     this._filmComponent.setFilmAsWatchedClickHandler(this._handleAsWatchedListClick);
     this._filmComponent.setFilmFavoriteClickHandler(this._handleFavoriteListClick);
 
-    this._filmDetails.setFilmWatchListClickHandler(this._handleWatchListClick);
-    this._filmDetails.setFilmAsWatchedClickHandler(this._handleAsWatchedListClick);
-    this._filmDetails.setFilmFavoriteClickHandler(this._handleFavoriteListClick);
-
     if (prevFilmComponent === null || prevFilmDetails === null) {
       render(this._filmListContainer, this._filmComponent, RenderPosition.BEFOREEND);
       return;
@@ -57,18 +53,11 @@ export default class Film {
       replace(this._filmComponent, prevFilmComponent);
     }
 
-    if (this._mode === Mode.OPENED) {
-      this._onCloseModal();
-      this._onShowModal();
-    }
-
     remove(prevFilmComponent);
-    remove(prevFilmDetails);
   }
 
   destroy() {
     remove(this._filmComponent);
-    remove(this._prevFilmDetails);
   }
 
   resetView() {
@@ -87,7 +76,7 @@ export default class Film {
   }
 
   _onShowModal() {
-    this._filmDetails.setCloseClickHandler(this._handleClose);
+    this._filmDetails.setCloseCrossClickHandler(this._handleClose);
     document.addEventListener(`keydown`, this._onEscKeyDownHandler);
     document.body.classList.add(`hide-overflow`);
 
@@ -108,6 +97,7 @@ export default class Film {
   _onEscKeyDownHandler(evt) {
     if (isEscape(evt)) {
       this._onCloseModal();
+      this._filmDetails.reset(this.film);
       document.removeEventListener(`keydown`, this._onEscKeyDownHandler);
     }
   }
