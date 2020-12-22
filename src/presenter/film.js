@@ -1,5 +1,5 @@
 import FilmCardView from "../view/film-card.js";
-import FilmDetailsView from "../view/film-details.js";
+import FilmDetailsView from "../view/popup.js";
 
 import {render, replace, remove, RenderPosition} from "../utils/dom.js";
 import {isEscape} from "../utils/common.js";
@@ -31,10 +31,10 @@ export default class Film {
   init(film) {
     this.film = film;
     const prevFilmComponent = this._filmComponent;
-    const prevFilmDetails = this._filmDetails;
+    const prevFilmDetails = this._popup;
 
     this._filmComponent = new FilmCardView(film);
-    this._filmDetails = new FilmDetailsView(film);
+    this._popup = new FilmDetailsView(film);
 
     this._filmComponent.setFilmPosterClickHandler(this._handleOpenClick);
     this._filmComponent.setFilmTitleClickHandler(this._handleOpenClick);
@@ -67,8 +67,8 @@ export default class Film {
   }
 
   _onCloseModal() {
-    this._filmDetails.getElement().remove(this._filmDetails.getElement());
-    this._filmDetails.removeElement();
+    this._popup.getElement().remove(this._popup.getElement());
+    this._popup.removeElement();
     document.body.classList.remove(`hide-overflow`);
     document.removeEventListener(`keydown`, this._onEscKeyDownHandler);
 
@@ -76,11 +76,11 @@ export default class Film {
   }
 
   _onShowModal() {
-    this._filmDetails.setCloseCrossClickHandler(this._handleClose);
+    this._popup.setCloseCrossClickHandler(this._handleClose);
     document.addEventListener(`keydown`, this._onEscKeyDownHandler);
     document.body.classList.add(`hide-overflow`);
 
-    render(document.body, this._filmDetails, RenderPosition.BEFOREEND);
+    render(document.body, this._popup, RenderPosition.BEFOREEND);
 
     this._changeMode();
     this._mode = Mode.OPENED;
@@ -97,7 +97,7 @@ export default class Film {
   _onEscKeyDownHandler(evt) {
     if (isEscape(evt)) {
       this._onCloseModal();
-      this._filmDetails.reset(this.film);
+      this._popup.reset(this.film);
       document.removeEventListener(`keydown`, this._onEscKeyDownHandler);
     }
   }

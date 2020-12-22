@@ -1,5 +1,4 @@
 import UserTitleView from './view/user-title.js';
-import NavigationView from './view/main-navigation.js';
 import BoardPresenter from './presenter/board.js';
 import {render, RenderPosition} from './utils/dom.js';
 
@@ -17,7 +16,7 @@ const filters = generateFilter(films);
 
 const boardPresenter = new BoardPresenter(siteMainElement);
 render(siteHeaderElement, new UserTitleView(), RenderPosition.BEFOREEND);
-boardPresenter.init(films);
-render(siteMainElement, new NavigationView(filters), RenderPosition.AFTERBEGIN);
+boardPresenter.init(films, filters);
+
 
 footerStatistic.textContent = `${films.length} movies inside`;
