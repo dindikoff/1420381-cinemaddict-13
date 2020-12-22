@@ -23,7 +23,7 @@ export const sortByYear = (filmA, filmB) => {
     return weight;
   }
 
-  return dayjs(filmA.year).diff(dayjs(filmB.year));
+  return dayjs(filmB.year).diff(dayjs(filmA.year));
 };
 
 export const sortByRating = (filmA, filmB) => {
