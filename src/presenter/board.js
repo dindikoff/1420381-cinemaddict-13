@@ -4,9 +4,12 @@ import EmptyList from '../view/film-list-empty.js';
 import ShowMoreButtonView from '../view/show-more-button.js';
 import SortView from '../view/sort-filter.js';
 import FilmPresenter from './film.js';
+import NavigationView from '../view/main-navigation.js';
 
 import {render, remove, RenderPosition} from '../utils/dom.js';
 import {updateItem} from "../utils/common.js";
+import {sortByYear, sortByRating} from "../utils/film.js";
+import {SortType} from "../const.js";
 
 const FILM_LIST_COUNT_STEP = 5;
 
@@ -16,27 +19,60 @@ export default class Board {
     this._renderFilmsCount = FILM_LIST_COUNT_STEP;
     this._filmPresenter = {};
 
+    this._currentSortType = SortType.DEFAULT;
+
     this._filmComponent = new FilmsView();
     this._filmListComponent = new FilmListView();
     this._emptyListComponent = new EmptyList();
     this._showMoreButtonComponent = new ShowMoreButtonView();
-    this._sortComponent = new SortView();
 
     this._handleLoadMoreButton = this._handleLoadMoreButton.bind(this);
     this._handleFilmChange = this._handleFilmChange.bind(this);
     this._handleModeChange = this._handleModeChange.bind(this);
+    this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
   }
 
-  init(filmList) {
+  init(filmList, filters) {
     this._filmList = filmList.slice();
-    render(this._boardContainer, this._filmComponent, RenderPosition.BEFOREEND);
-    render(this._filmComponent, this._filmListComponent, RenderPosition.BEFOREEND);
+    this._filters = filters;
 
+    this._navigationComponent = new NavigationView(this._filters);
+    this._sortComponent = new SortView(this._currentSortType);
+
+    this._sourcedBoardFilms = filmList.slice();
     this._renderBoard();
   }
 
+  _handleSortTypeChange(sortType) {
+    if (this._currentSortType === sortType) {
+      return;
+    }
+
+    this._sortFilms(sortType);
+    this._clearFilmList();
+    this._renderBoard();
+  }
+
+  _sortFilms(sortType) {
+    switch (sortType) {
+      case SortType.BY_DATE:
+        this._filmList = this._sourcedBoardFilms.slice();
+        this._filmList.sort(sortByYear);
+        break;
+      case SortType.BY_RATING:
+        this._filmList = this._sourcedBoardFilms.slice();
+        this._filmList.sort(sortByRating);
+        break;
+      default:
+        this._filmList = this._sourcedBoardFilms.slice();
+    }
+
+    this._currentSortType = sortType;
+  }
+
   _renderSort() {
-    render(this._boardContainer, this._sortComponent, RenderPosition.AFTERBEGIN);
+    render(this._boardContainer, this._sortComponent, RenderPosition.BEFOREEND);
+    this._sortComponent.setSortTypeChangeHandler(this._handleSortTypeChange);
   }
 
   _renderEmptyList() {
@@ -94,13 +130,22 @@ export default class Board {
     }
   }
 
+  _renderNavigation() {
+    render(this._boardContainer, this._navigationComponent, RenderPosition.BEFOREEND);
+  }
+
   _renderBoard() {
     if (this._filmList.length === 0) {
       this._renderEmptyList();
       return;
     }
 
-    this._renderSort();
     this._renderFilmList();
+    this._renderNavigation();
+    this._renderSort();
+
+    render(this._boardContainer, this._filmComponent, RenderPosition.BEFOREEND);
+    render(this._filmComponent, this._filmListComponent, RenderPosition.BEFOREEND);
+
   }
 }

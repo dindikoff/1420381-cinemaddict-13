@@ -167,10 +167,10 @@ const createFilmDetailsTemplate = (data) => {
     </section>`).trim();
 };
 
-export default class FilmDetails extends SmartView {
+export default class Popup extends SmartView {
   constructor(film) {
     super();
-    this._data = FilmDetails.parseFilmToData(film);
+    this._data = Popup.parseFilmToData(film);
 
     this._closeCrossClickHandler = this._closeCrossClickHandler.bind(this);
     this._changeEmojiHandler = this._changeEmojiHandler.bind(this);
@@ -183,7 +183,7 @@ export default class FilmDetails extends SmartView {
   }
 
   reset(film) {
-    this.updateData(FilmDetails.parseFilmToData(film));
+    this.updateData(Popup.parseFilmToData(film));
   }
 
   getTemplate() {
