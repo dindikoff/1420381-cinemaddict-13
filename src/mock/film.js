@@ -27,18 +27,6 @@ const FILM_RATING = {
   MAX: 10.0
 };
 
-const FILM_YEAR = {
-  MIN: 1900,
-  MAX: 2020
-};
-
-const HOUR = 60;
-
-const FILM_DURATION = {
-  MIN: 90,
-  MAX_DURATION: 260
-};
-
 const GENRES = [
   `Musical`,
   `Cartoon`,
@@ -115,17 +103,6 @@ const generatePoster = () => {
 
 const generateRating = () => {
   return getRandomFloat(FILM_RATING.MIN, FILM_RATING.MAX).toFixed(1);
-};
-
-const generateYear = () => {
-  return getRandomInteger(FILM_YEAR.MIN, FILM_YEAR.MAX);
-};
-
-const generateDuration = () => {
-  const hour = Math.floor(getRandomInteger(FILM_DURATION.MIN, FILM_DURATION.MAX) / HOUR);
-  const minutes = Math.floor(getRandomInteger(FILM_DURATION.MIN, FILM_DURATION.MAX)) % HOUR;
-
-  return `${hour}h ${minutes}m`;
 };
 
 const generateGenre = () => {
@@ -221,8 +198,7 @@ export const generateFilm = () => {
     pg: generatePgRating(),
     poster: generatePoster(),
     rating: generateRating(),
-    year: generateYear(),
-    duration: generateDuration(),
+    duration: getRandomInteger(0, 300),
     genre: generateGenre(),
     description: generateDescription(),
     comments: generateCommentsList(),
