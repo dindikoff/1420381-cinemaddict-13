@@ -1,4 +1,6 @@
 import dayjs from "dayjs";
+import relativeTime from 'dayjs/plugin/relativeTime';
+dayjs.extend(relativeTime);
 
 export const KEY = {
   ESC: `Escape`
@@ -21,12 +23,22 @@ export const getRandomFloat = (a = 1, b = 0) => {
   return lower + Math.random() * (upper - lower);
 };
 
-export const formatReleaseDate = (releaseDate) => {
-  return dayjs(releaseDate).format(`DD MMMM YYYY`);
+export const getTimeFromMins = (mins) => {
+  let hours = Math.trunc(mins / 60);
+  let minutes = mins % 60;
+  return hours + `h ` + minutes + `m`;
+};
+
+export const formatReleaseDate = (releaseDate, type) => {
+  if (type === `year`) {
+    return dayjs(releaseDate).format(`YYYY`);
+  } else {
+    return dayjs(releaseDate).format(`DD MMMM YYYY`);
+  }
 };
 
 export const formatCommentDate = (commentDate) => {
-  return dayjs(commentDate).format(`YYYY/M/D HH:MM`);
+  return dayjs(commentDate).fromNow();
 };
 
 export const getRandomIndexRange = (from, array) => {

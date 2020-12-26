@@ -1,5 +1,5 @@
 import SmartView from './smart.js';
-import {formatReleaseDate, formatCommentDate} from '../utils/common.js';
+import {formatReleaseDate, formatCommentDate, getTimeFromMins} from '../utils/common.js';
 
 const generateCommentTemplate = (comment) => {
   return (`
@@ -133,7 +133,7 @@ const createFilmDetailsTemplate = (data) => {
                 </tr>
                 <tr class="film-details__row">
                   <td class="film-details__term">Runtime</td>
-                  <td class="film-details__cell">${duration}</td>
+                  <td class="film-details__cell">${getTimeFromMins(duration)}</td>
                 </tr>
                 <tr class="film-details__row">
                   <td class="film-details__term">Country</td>
