@@ -35,20 +35,36 @@ export const replace = (newChild, oldChild) => {
 
   const parent = oldChild.parentElement;
 
-  if (parent === null || oldChild === null || newChild === null) {
-    throw new Error(`Can't replace unexisting elements`);
+  if (parent === null || newChild === null) {
+    throw new Error(`Can't replace unexisting elements.`);
   }
 
   parent.replaceChild(newChild, oldChild);
 };
 
 export const remove = (component) => {
+  if (component === null) {
+    return;
+  }
+
   if (!(component instanceof Abstract)) {
     throw new Error(`Can remove only components`);
   }
 
   component.getElement().remove();
   component.removeElement();
+};
+
+export const removeChild = (parent, child) => {
+  if (child instanceof Abstract) {
+    child = child.getElement();
+  }
+
+  if (parent === null || child === null) {
+    throw new Error(`Can't remove unexisting elements.`);
+  }
+
+  parent.removeChild(child);
 };
 
 export const createElement = (template) => {
