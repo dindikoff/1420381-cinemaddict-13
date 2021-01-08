@@ -2,7 +2,9 @@ import FilmCardView from "../view/film-card.js";
 import FilmDetailsView from "../view/popup.js";
 
 import {render, replace, remove, RenderPosition} from "../utils/dom.js";
-import {isEscape} from "../utils/common.js";
+import {UserAction, UpdateType} from "../const.js";
+import Comments from "../model/comments";
+import {generateComment} from "../mock/comments";
 
 const Mode = {
   CLOSED: `CLOSED`,
@@ -16,22 +18,25 @@ export default class Film {
     this._changeMode = changeMode;
 
     this._filmComponent = null;
-    this._prevFilmDetails = null;
     this._mode = Mode.CLOSED;
 
     this._handleOpenClick = this._handleOpenClick.bind(this);
     this._handleClose = this._handleClose.bind(this);
-    this._onEscKeyDownHandler = this._onEscKeyDownHandler.bind(this);
 
     this._handleWatchListClick = this._handleWatchListClick.bind(this);
     this._handleAsWatchedListClick = this._handleAsWatchedListClick.bind(this);
     this._handleFavoriteListClick = this._handleFavoriteListClick.bind(this);
+    this._handleUpdateComments = this._handleUpdateComments.bind(this);
+    this._handleDeleteComment = this._handleDeleteComment.bind(this);
   }
 
   init(film) {
     this.film = film;
     const prevFilmComponent = this._filmComponent;
     const prevFilmDetails = this._popup;
+
+    this._commentsModel = new Comments(film.comments);
+    this._commentsModel.setComments(this.film.comments);
 
     this._filmComponent = new FilmCardView(film);
     this._popup = new FilmDetailsView(film);
@@ -49,11 +54,18 @@ export default class Film {
       return;
     }
 
-    if (this._filmListContainer.contains(prevFilmComponent.getElement())) {
+    if (this._mode === Mode.CLOSED) {
       replace(this._filmComponent, prevFilmComponent);
     }
 
+    if (this._mode === Mode.OPENED) {
+      replace(this._filmComponent, prevFilmComponent);
+      replace(this._popup, prevFilmDetails);
+      this._setPopUpHandlers();
+    }
+
     remove(prevFilmComponent);
+    remove(prevFilmDetails);
   }
 
   destroy() {
@@ -66,22 +78,36 @@ export default class Film {
     }
   }
 
-  _onCloseModal() {
+  _onCloseModal(update) {
+    const isObjectChanged = (this.film.isFilmInWatchList !== update.isFilmInWatchList ||
+      this.film.isFilmInAlreadyWatch !== update.isFilmInAlreadyWatch ||
+      this.film.isFilmInFavorite !== update.isFilmInFavorite) ? true : ``;
+
+    if (isObjectChanged) {
+      this._changeData(
+          UserAction.UPDATE,
+          UpdateType.MAJOR,
+          update
+      );
+    }
+
     this._popup.getElement().remove(this._popup.getElement());
     this._popup.removeElement();
+    this._popup.removeEscapePressHandler();
     document.body.classList.remove(`hide-overflow`);
-    document.removeEventListener(`keydown`, this._onEscKeyDownHandler);
 
     this._mode = Mode.CLOSED;
   }
 
+  _handleClose(update) {
+    this._onCloseModal(update);
+  }
+
   _onShowModal() {
-    this._popup.setCloseCrossClickHandler(this._handleClose);
-    document.addEventListener(`keydown`, this._onEscKeyDownHandler);
+    this._setPopUpHandlers();
+
     document.body.classList.add(`hide-overflow`);
-
     render(document.body, this._popup, RenderPosition.BEFOREEND);
-
     this._changeMode();
     this._mode = Mode.OPENED;
   }
@@ -90,20 +116,17 @@ export default class Film {
     this._onShowModal();
   }
 
-  _handleClose() {
-    this._onCloseModal();
-  }
-
-  _onEscKeyDownHandler(evt) {
-    if (isEscape(evt)) {
-      this._onCloseModal();
-      this._popup.reset(this.film);
-      document.removeEventListener(`keydown`, this._onEscKeyDownHandler);
-    }
+  _setPopUpHandlers() {
+    this._popup.setEscapePressHandler(this._handleClose);
+    this._popup.setCloseCrossClickHandler(this._handleClose);
+    this._popup.setDeleteComment(this._handleDeleteComment);
+    this._popup.setSubmitCommentHandler(this._handleUpdateComments);
   }
 
   _handleWatchListClick() {
     this._changeData(
+        UserAction.UPDATE,
+        UpdateType.MAJOR,
         Object.assign(
             {},
             this.film,
@@ -114,21 +137,59 @@ export default class Film {
 
   _handleAsWatchedListClick() {
     this._changeData(
+        UserAction.UPDATE,
+        UpdateType.MAJOR,
         Object.assign(
             {},
             this.film,
-            {isFilmInHistory: !this.film.isFilmInHistory}
+            {isFilmInAlreadyWatch: !this.film.isFilmInAlreadyWatch}
         )
     );
   }
 
   _handleFavoriteListClick() {
     this._changeData(
+        UserAction.UPDATE,
+        UpdateType.MAJOR,
         Object.assign(
             {},
             this.film,
             {isFilmInFavorite: !this.film.isFilmInFavorite}
         )
     );
+  }
+
+  _handleUpdateComments(comment, scrollPosition) {
+    const serverComment = generateComment();
+
+    const newComment = Object.assign(
+        {},
+        serverComment,
+        comment
+    );
+
+    this._commentsModel.addComment(this._commentsModel.getComments(), newComment);
+    this.film.comments = this._commentsModel.getComments();
+
+    this._changeData(
+        UserAction.UPDATE,
+        UpdateType.MINOR,
+        this.film
+    );
+
+    this._popup.getElement().scroll(0, scrollPosition);
+  }
+
+  _handleDeleteComment(commentId, scrollPosition) {
+    this._commentsModel.deleteComment(this._commentsModel.getComments(), commentId);
+    this.film.comments = this._commentsModel.getComments();
+
+    this._changeData(
+        UserAction.UPDATE,
+        UpdateType.MINOR,
+        this.film
+    );
+
+    this._popup.getElement().scroll(0, scrollPosition);
   }
 }

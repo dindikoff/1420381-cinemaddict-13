@@ -203,7 +203,7 @@ export const generateFilm = () => {
     description: generateDescription(),
     comments: generateCommentsList(),
     isFilmInWatchList: Boolean(getRandomInteger(0, 1)),
-    isFilmInHistory: Boolean(getRandomInteger(0, 1)),
+    isFilmInAlreadyWatch: Boolean(getRandomInteger(0, 1)),
     isFilmInFavorite: Boolean(getRandomInteger(0, 1)),
   };
 };

@@ -50,6 +50,9 @@ const generateEmoji = () => {
   return getRandomIndexRange(0, EMOJIS);
 };
 
+const generateId = () => Date.now() + parseInt(Math.random() * 10000, 10);
+
+
 const generateDate = () => {
   const theDate = dayjs().add(getRandomInteger(-GAPS.MAX_DAYS, 0), `day`)
     .add(getRandomInteger(-GAPS.MAX_YEARS, 0), `year`)
@@ -61,6 +64,7 @@ const generateDate = () => {
 };
 
 export const generateComment = () => ({
+  id: generateId(),
   author: generateAuthor(),
   commentText: generateCommentText(),
   emoji: generateEmoji(),

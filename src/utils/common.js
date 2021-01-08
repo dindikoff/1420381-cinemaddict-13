@@ -1,13 +1,14 @@
 import dayjs from "dayjs";
 import relativeTime from 'dayjs/plugin/relativeTime';
+import {KEY, DateType} from "../const.js";
 dayjs.extend(relativeTime);
-
-export const KEY = {
-  ESC: `Escape`
-};
 
 export const isEscape = (evt) => {
   return evt.key === KEY.ESC;
+};
+
+export const isEnter = (evt) => {
+  return (evt.key === `Enter` && (evt.ctrlKey || evt.metaKey));
 };
 
 export const getRandomInteger = (a = 0, b = 1) => {
@@ -30,11 +31,9 @@ export const getTimeFromMins = (mins) => {
 };
 
 export const formatReleaseDate = (releaseDate, type) => {
-  if (type === `year`) {
-    return dayjs(releaseDate).format(`YYYY`);
-  } else {
-    return dayjs(releaseDate).format(`DD MMMM YYYY`);
-  }
+  return type === DateType.year
+    ? dayjs(releaseDate).format(`YYYY`)
+    : dayjs(releaseDate).format(`DD MMM YYYY`);
 };
 
 export const formatCommentDate = (commentDate) => {
@@ -47,16 +46,3 @@ export const getRandomIndexRange = (from, array) => {
   return array[randomIndex];
 };
 
-export const updateItem = (items, update) => {
-  const index = items.findIndex((item) => item.id === update.id);
-
-  if (index === -1) {
-    return items;
-  }
-
-  return [
-    ...items.slice(0, index),
-    update,
-    ...items.slice(index + 1)
-  ];
-};

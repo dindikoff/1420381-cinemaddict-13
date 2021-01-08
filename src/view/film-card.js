@@ -9,6 +9,8 @@ const createFilmCardTemplate = (film) => {
     date, duration,
     genre, poster,
     description, comments,
+    isFilmInWatchList, isFilmInAlreadyWatch,
+    isFilmInFavorite
   } = film;
 
   const generateShortDescriptionTemplate = () => {
@@ -30,9 +32,9 @@ const createFilmCardTemplate = (film) => {
       <p class="film-card__description">${generateShortDescriptionTemplate()}</p>
       <a class="film-card__comments">${comments.length} comments</a>
       <div class="film-card__controls">
-        <button class="film-card__controls-item button film-card__controls-item--add-to-watchlist" type="button">Add to watchlist</button>
-        <button class="film-card__controls-item button film-card__controls-item--mark-as-watched" type="button">Mark as watched</button>
-        <button class="film-card__controls-item button film-card__controls-item--favorite" type="button">Mark as favorite</button>
+        <button class="film-card__controls-item button film-card__controls-item--add-to-watchlist ${isFilmInWatchList ? `film-card__controls-item--active` : ``}" type="button">Add to watchlist</button>
+        <button class="film-card__controls-item button film-card__controls-item--mark-as-watched ${isFilmInAlreadyWatch ? `film-card__controls-item--active` : ``}" type="button">Mark as watched</button>
+        <button class="film-card__controls-item button film-card__controls-item--favorite ${isFilmInFavorite ? `film-card__controls-item--active` : ``}" type="button">Mark as favorite</button>
       </div>
     </article>
   `).trim();
