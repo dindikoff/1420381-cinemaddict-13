@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 import {generateComment} from './comments.js';
-import {getRandomInteger, getRandomFloat, getRandomIndexRange} from '../utils/common.js';
+import {getRandomFloat, getRandomIndexRange, getRandomInteger} from '../utils/common.js';
 
 const TITLES = [
   `The Man with the Golden Arm`,
@@ -77,10 +77,14 @@ const ACTORS = [
   `Denzel Washington`,
 ];
 
-const GAPS = {
+const RELEASED_GAPS = {
   MAX_DAYS: 365,
   MAX_YEARS: 20,
   MAX_MONTHS: 12
+};
+
+const WATCHING_DATE_GAPS = {
+  MAX_DAYS: 365
 };
 
 const COUNTRIES = [
@@ -115,7 +119,8 @@ const generateGenre = () => {
   const randomGenreList = new Array(randomArrayNumber).fill()
     .map(getRandomGenre);
 
-  return randomGenreList;
+  const arrayGenreToSet = new Set(randomGenreList);
+  return Array.from(arrayGenreToSet);
 };
 
 const generateDescription = () => {
@@ -148,10 +153,8 @@ const generateFilmWriters = () => {
     return getRandomIndexRange(0, WRITERS);
   };
 
-  const randomWriterList = new Array(randomArrayNumber).fill()
+  return new Array(randomArrayNumber).fill()
     .map(getRandomWriter);
-
-  return randomWriterList;
 };
 
 const generateFilmActors = () => {
@@ -161,16 +164,20 @@ const generateFilmActors = () => {
 
   const randomArrayNumber = getRandomInteger(1, ACTORS.length - 1);
 
-  const randomActorList = new Array(randomArrayNumber).fill()
+  return new Array(randomArrayNumber).fill()
     .map(getRandomActor);
-
-  return randomActorList;
 };
 
 const generateRandomDate = () => {
-  const theDate = dayjs().add(getRandomInteger(-GAPS.MAX_DAYS, 0), `day`)
-    .add(getRandomInteger(-GAPS.MAX_YEARS, 0), `year`)
-    .add(getRandomInteger(-GAPS.MAX_MONTHS, 0), `month`);
+  const theDate = dayjs().add(getRandomInteger(-RELEASED_GAPS.MAX_DAYS, 0), `day`)
+    .add(getRandomInteger(-RELEASED_GAPS.MAX_YEARS, 0), `year`)
+    .add(getRandomInteger(-RELEASED_GAPS.MAX_MONTHS, 0), `month`);
+
+  return theDate.toDate();
+};
+
+const generateWatchingDate = () => {
+  const theDate = dayjs().add(getRandomInteger(-WATCHING_DATE_GAPS.MAX_DAYS, 0), `day`);
 
   return theDate.toDate();
 };
@@ -205,5 +212,6 @@ export const generateFilm = () => {
     isFilmInWatchList: Boolean(getRandomInteger(0, 1)),
     isFilmInAlreadyWatch: Boolean(getRandomInteger(0, 1)),
     isFilmInFavorite: Boolean(getRandomInteger(0, 1)),
+    watchingDate: generateWatchingDate()
   };
 };

@@ -9,12 +9,14 @@ import {render, remove, RenderPosition} from '../utils/dom.js';
 import {sortByYear, sortByRating} from "../utils/film.js";
 import {SortType, UpdateType, UserAction} from "../const.js";
 import {filter} from '../utils/filter.js';
+import UserTitle from "../view/user-title";
 
 const FILM_LIST_COUNT_STEP = 5;
 
 export default class Board {
-  constructor(boardContainer, filmsModel, filterModel) {
+  constructor(boardContainer, siteHeaderContainer, filmsModel, filterModel) {
     this._boardContainer = boardContainer;
+    this._siteHeaderContainer = siteHeaderContainer;
     this._filmsModel = filmsModel;
     this._filterModel = filterModel;
     this._renderFilmsCount = FILM_LIST_COUNT_STEP;
@@ -23,36 +25,48 @@ export default class Board {
     this._sortComponent = null;
     this._loadMoreButtonComponent = null;
 
+    this._profileComponent = null;
+
     this._currentSortType = SortType.DEFAULT;
 
     this._filmComponent = new FilmsView();
     this._filmListComponent = new FilmListView();
     this._emptyListComponent = new EmptyList();
+    this._profileComponent = new UserTitle(this._filmsModel.getFilms());
 
     this._handleViewAction = this._handleViewAction.bind(this);
     this._handleModelEvent = this._handleModelEvent.bind(this);
     this._handleLoadMoreButton = this._handleLoadMoreButton.bind(this);
     this._handleModelChange = this._handleModelChange.bind(this);
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
-
-    this._filmsModel.addObserver(this._handleModelEvent);
-    this._filterModel.addObserver(this._handleModelEvent);
   }
 
   init() {
+    this._filmsModel.addObserver(this._handleModelEvent);
+    this._filterModel.addObserver(this._handleModelEvent);
     this._renderBoard();
   }
 
+  destroy() {
+    this._clearFilmList({resetRenderedFilmsCount: true});
+    remove(this._filmListComponent);
+    remove(this._filmComponent);
+    remove(this._sortComponent);
+
+    this._filmsModel.removeObserver(this._handleModelEvent);
+    this._filterModel.removeObserver(this._handleModelEvent);
+  }
+
   _getFilms() {
-    const filterType = this._filterModel.getFilter();
+    const filterType = this._filterModel.getActive();
     const movies = this._filmsModel.getFilms();
     const filteredMovies = filter[filterType](movies);
 
     switch (this._currentSortType) {
       case SortType.BY_DATE:
-        return filteredMovies.sort(sortByYear);
+        return filteredMovies.slice().sort(sortByYear);
       case SortType.BY_RATING:
-        return filteredMovies.sort(sortByRating);
+        return filteredMovies.slice().sort(sortByRating);
     }
 
     return filteredMovies;
@@ -91,7 +105,6 @@ export default class Board {
     this._loadMoreButtonComponent = new ShowMoreButtonView();
     this._loadMoreButtonComponent.setClickHandler(this._handleLoadMoreButton);
     render(this._filmListComponent, this._loadMoreButtonComponent, RenderPosition.BEFOREEND);
-
   }
 
   _handleLoadMoreButton() {
@@ -180,6 +193,7 @@ export default class Board {
       this._renderLoadMoreButton();
     }
 
+    render(this._siteHeaderContainer, this._profileComponent, RenderPosition.BEFOREEND);
     render(this._boardContainer, this._filmComponent, RenderPosition.BEFOREEND);
     render(this._filmComponent, this._filmListComponent, RenderPosition.BEFOREEND);
 

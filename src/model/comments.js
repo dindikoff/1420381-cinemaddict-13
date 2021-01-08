@@ -35,6 +35,6 @@ export default class Comments extends Observer {
   }
 
   getComments() {
-    return this._comments;
+    return this._comments.slice();
   }
 }
