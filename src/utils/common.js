@@ -24,9 +24,16 @@ export const getRandomFloat = (a = 1, b = 0) => {
   return lower + Math.random() * (upper - lower);
 };
 
-export const getTimeFromMins = (mins) => {
+export const getTimeFromMins = (mins, separate) => {
   let hours = Math.trunc(mins / 60);
   let minutes = mins % 60;
+
+  if (separate) {
+    return {
+      hours,
+      minutes
+    };
+  }
   return hours + `h ` + minutes + `m`;
 };
 

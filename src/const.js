@@ -31,6 +31,22 @@ export const FilterType = {
   FAVORITE: `Favorites`
 };
 
-export const MenuItem = {
-  STATISTIC: `Stats`,
+export const MenuStats = {
+  MOVIES: `MOVIES`,
+  STATISTICS: `STATISTICS`
+};
+
+export const StatsFilter = {
+  ALL: `all`,
+  TODAY: `today`,
+  WEEK: `week`,
+  MONTH: `month`,
+  YEAR: `year`
+};
+
+export const UserTitle = {
+  NEW: ``,
+  NOVICE: `novice`,
+  FAN: `fan`,
+  MOVIE_BUFF: `movie buff`
 };
