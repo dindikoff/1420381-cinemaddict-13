@@ -1,4 +1,4 @@
-import {getTimeFromMins} from "./common";
+import {getTimeFromMins} from "./utils";
 import dayjs from "dayjs";
 import {StatsFilter} from "../const";
 

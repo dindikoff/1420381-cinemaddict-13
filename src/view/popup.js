@@ -1,5 +1,5 @@
 import SmartView from './smart.js';
-import {formatReleaseDate, formatCommentDate, getTimeFromMins, isEscape, isEnter} from '../utils/common.js';
+import {formatReleaseDate, formatCommentDate, getTimeFromMins, isEscape, isEnter} from '../utils/utils.js';
 import he from 'he';
 
 const generateCommentTemplate = (comment) => {
@@ -9,7 +9,7 @@ const generateCommentTemplate = (comment) => {
   ${comment.emoji ? `<img src="./images/emoji/${comment.emoji}.png" width="55" height="55" alt="emoji-${comment.emoji}">`
       : ``}</span>
       <div>
-        <p class="film-details__comment-text">${he.encode(comment.commentText)}</p>
+        <p class="film-details__comment-text">${comment.commentText}</p>
         <p class="film-details__comment-info">
           <span class="film-details__comment-author">${comment.author}</span>
           <span class="film-details__comment-day">${formatCommentDate(comment.date)}</span>
@@ -102,7 +102,7 @@ const createFilmDetailsTemplate = (data) => {
           </div>
           <div class="film-details__info-wrap">
             <div class="film-details__poster">
-              <img class="film-details__poster-img" src="./images/posters/${poster}" alt="">
+              <img class="film-details__poster-img" src="${poster}" alt="">
               <p class="film-details__age">${pg}+</p>
             </div>
             <div class="film-details__info">

@@ -19,11 +19,10 @@ export default class Comments extends Observer {
     this._notify(updateType, update);
   }
 
-  deleteComment(updateType, update) {
-    const index = this._comments.findIndex((comment) => comment.id === parseInt(update, 10));
-
+  deleteComment(updateType, id) {
+    const index = this._comments.findIndex((comment) => parseInt(comment.id, 10) === parseInt(id, 10));
     if (index === -1) {
-      throw new Error(`Can't delete unexisting comment`);
+      throw new Error(`Can't delete nonexistent comment`);
     }
 
     this._comments = [
@@ -36,5 +35,22 @@ export default class Comments extends Observer {
 
   getComments() {
     return this._comments.slice();
+  }
+
+  static adaptToClient(comment) {
+    const adaptedComment = Object.assign(
+        {},
+        comment,
+        {
+          commentText: comment.comment,
+          date: new Date(comment.date),
+          emoji: comment.emotion
+        }
+    );
+
+    delete adaptedComment.comment;
+    delete adaptedComment.emotion;
+
+    return adaptedComment;
   }
 }

@@ -1,25 +1,24 @@
+import Api from './api.js';
 import BoardPresenter from './presenter/board.js';
 import FilterPresenter from './presenter/filter.js';
 import FilmsModel from './model/movies.js';
 import FilterModel from './model/filter.js';
-import {remove, render, RenderPosition} from './utils/dom.js';
+import {remove, render, RenderPosition} from './utils/dom-utils.js';
 
-import {generateFilm} from './mock/film.js';
-import {MenuStats} from "./const";
+import {MenuStats, UpdateType} from "./const";
 import StatsView from "./view/site-menu";
 
-const FILM_LIST_COUNT = 20;
+const AUTHORIZATION = `Basic fsdf23fsddfsfdsf3fsdfsdfsdf5fgsdgdfgdHEY`;
+const END_POINT = `https://13.ecmascript.pages.academy/cinemaddict/`;
 
 const siteHeaderElement = document.querySelector(`.header`);
 const siteMainElement = document.querySelector(`.main`);
 const footerStatistic = document.querySelector(`.footer__statistics`);
 
 let statsComponent = null;
-const films = new Array(FILM_LIST_COUNT).fill().map(generateFilm);
+const api = new Api(END_POINT, AUTHORIZATION);
 
 const filmsModel = new FilmsModel();
-filmsModel.setFilms(films);
-
 const filterModel = new FilterModel();
 
 const changeMenuState = (action) => {
@@ -37,11 +36,19 @@ const changeMenuState = (action) => {
   }
 };
 
-const boardPresenter = new BoardPresenter(siteMainElement, siteHeaderElement, filmsModel, filterModel);
+const boardPresenter = new BoardPresenter(siteMainElement, siteHeaderElement, filmsModel, filterModel, api);
 const filterPresenter = new FilterPresenter(siteMainElement, filterModel, filmsModel, changeMenuState);
 
 filterPresenter.init();
 boardPresenter.init();
 
-footerStatistic.textContent = `${films.length} movies inside`;
+
+api.getFilms()
+  .then((films) => {
+    filmsModel.setFilms(UpdateType.INIT, films);
+    footerStatistic.textContent = `${films.length} movies inside`;
+  })
+  .catch(() => {
+    filmsModel.setFilms(UpdateType.INIT, []);
+  });
 

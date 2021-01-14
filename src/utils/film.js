@@ -35,3 +35,5 @@ export const sortByRating = (filmA, filmB) => {
 
   return dayjs(filmB.rating).diff(dayjs(filmA.rating));
 };
+
+export const generateId = () => Date.now() + parseInt(Math.random() * 10000, 10);

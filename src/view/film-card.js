@@ -1,5 +1,5 @@
 import AbstractView from "./abstract.js";
-import {formatReleaseDate, getTimeFromMins} from "../utils/common";
+import {formatReleaseDate, getTimeFromMins} from "../utils/utils";
 
 const createFilmCardTemplate = (film) => {
   const SHORT_DESCRIPTION_MAX_LETTERS = 140;
@@ -28,7 +28,7 @@ const createFilmCardTemplate = (film) => {
         <span class="film-card__duration">${getTimeFromMins(duration)}</span>
         <span class="film-card__genre">${genre[0]}</span>
       </p>
-      <img src="./images/posters/${poster}" alt="" class="film-card__poster">
+      <img src="${poster}" alt="" class="film-card__poster">
       <p class="film-card__description">${generateShortDescriptionTemplate()}</p>
       <a class="film-card__comments">${comments.length} comments</a>
       <div class="film-card__controls">

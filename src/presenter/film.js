@@ -1,10 +1,9 @@
 import FilmCardView from "../view/film-card.js";
 import FilmDetailsView from "../view/popup.js";
 
-import {render, replace, remove, RenderPosition} from "../utils/dom.js";
+import {render, replace, remove, RenderPosition} from "../utils/dom-utils.js";
 import {UserAction, UpdateType} from "../const.js";
-import Comments from "../model/comments";
-import {generateComment} from "../mock/comments";
+import CommentsModel from "../model/comments";
 
 const Mode = {
   CLOSED: `CLOSED`,
@@ -12,10 +11,14 @@ const Mode = {
 };
 
 export default class Film {
-  constructor(filmListContainer, changeData, changeMode) {
+  constructor(filmListContainer, changeData, changeMode, api) {
     this._filmListContainer = filmListContainer;
     this._changeData = changeData;
     this._changeMode = changeMode;
+
+    this._api = api;
+
+    this._commentsModel = new CommentsModel();
 
     this._filmComponent = null;
     this._mode = Mode.CLOSED;
@@ -35,12 +38,20 @@ export default class Film {
     const prevFilmComponent = this._filmComponent;
     const prevFilmDetails = this._popup;
 
-    this._commentsModel = new Comments(film.comments);
-    this._commentsModel.setComments(this.film.comments);
+    this._api.getComments(this.film)
+      .then((comments) => {
+        this._commentsModel.setComments(comments);
+      })
+      .catch(() => {
+        this._commentsModel.setComments([]);
+      })
+      .then(() => {
+        this.film.comments = this._commentsModel.getComments();
+        this._popup = new FilmDetailsView(film);
+        this._setPopUpHandlers();
+      });
 
     this._filmComponent = new FilmCardView(film);
-    this._popup = new FilmDetailsView(film);
-
     this._filmComponent.setFilmPosterClickHandler(this._handleOpenClick);
     this._filmComponent.setFilmTitleClickHandler(this._handleOpenClick);
     this._filmComponent.setFilmCommentsClickHandler(this._handleOpenClick);
@@ -61,7 +72,6 @@ export default class Film {
     if (this._mode === Mode.OPENED) {
       replace(this._filmComponent, prevFilmComponent);
       replace(this._popup, prevFilmDetails);
-      this._setPopUpHandlers();
     }
 
     remove(prevFilmComponent);
@@ -104,8 +114,6 @@ export default class Film {
   }
 
   _onShowModal() {
-    this._setPopUpHandlers();
-
     document.body.classList.add(`hide-overflow`);
     render(document.body, this._popup, RenderPosition.BEFOREEND);
     this._changeMode();
@@ -160,15 +168,15 @@ export default class Film {
   }
 
   _handleUpdateComments(comment, scrollPosition) {
-    const serverComment = generateComment();
+  // В след задании будет обновление комментареви.
+  // const serverComment = generateComment();
+  // const newComment = Object.assign(
+  //     {},
+  //     serverComment,
+  //     comment
+  // );
 
-    const newComment = Object.assign(
-        {},
-        serverComment,
-        comment
-    );
-
-    this._commentsModel.addComment(this._commentsModel.getComments(), newComment);
+    // this._commentsModel.addComment(this._commentsModel.getComments(), newComment);
     this.film.comments = this._commentsModel.getComments();
 
     this._changeData(
@@ -181,8 +189,8 @@ export default class Film {
   }
 
   _handleDeleteComment(commentId, scrollPosition) {
-    this._commentsModel.deleteComment(this._commentsModel.getComments(), commentId);
     this.film.comments = this._commentsModel.getComments();
+    this._commentsModel.deleteComment(this.film.comments, commentId);
 
     this._changeData(
         UserAction.UPDATE,
