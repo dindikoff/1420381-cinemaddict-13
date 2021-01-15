@@ -9,7 +9,7 @@ const generateCommentTemplate = (comment) => {
   ${comment.emoji ? `<img src="./images/emoji/${comment.emoji}.png" width="55" height="55" alt="emoji-${comment.emoji}">`
       : ``}</span>
       <div>
-        <p class="film-details__comment-text">${comment.commentText}</p>
+        <p class="film-details__comment-text">${he.encode(comment.commentText)}</p>
         <p class="film-details__comment-info">
           <span class="film-details__comment-author">${comment.author}</span>
           <span class="film-details__comment-day">${formatCommentDate(comment.date)}</span>
