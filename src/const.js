@@ -21,7 +21,8 @@ export const UserAction = {
 
 export const UpdateType = {
   MINOR: `MINOR`,
-  MAJOR: `MAJOR`
+  MAJOR: `MAJOR`,
+  INIT: `INIT`,
 };
 
 export const FilterType = {
@@ -44,9 +45,22 @@ export const StatsFilter = {
   YEAR: `year`
 };
 
-export const UserTitle = {
-  NEW: ``,
-  NOVICE: `novice`,
-  FAN: `fan`,
-  MOVIE_BUFF: `movie buff`
+export const UserRank = {
+  NEW: {
+    filmsCount: 0,
+    rankName: ``
+  },
+  NOVICE: {
+    filmsCount: 10,
+    rankName: `novice`
+  },
+  FAN: {
+    filmsCount: 20,
+    rankName: `fan`
+  },
+  MOVIE_BUFF: {
+    filmsCount: 21,
+    rankName: `movie buff`
+  }
 };
+

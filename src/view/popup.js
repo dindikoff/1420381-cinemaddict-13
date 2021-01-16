@@ -1,5 +1,5 @@
 import SmartView from './smart.js';
-import {formatReleaseDate, formatCommentDate, getTimeFromMins, isEscape, isEnter} from '../utils/common.js';
+import {formatReleaseDate, formatCommentDate, getTimeFromMins, isEscape, isEnter} from '../utils/utils.js';
 import he from 'he';
 
 const generateCommentTemplate = (comment) => {
@@ -102,7 +102,7 @@ const createFilmDetailsTemplate = (data) => {
           </div>
           <div class="film-details__info-wrap">
             <div class="film-details__poster">
-              <img class="film-details__poster-img" src="./images/posters/${poster}" alt="">
+              <img class="film-details__poster-img" src="${poster}" alt="">
               <p class="film-details__age">${pg}+</p>
             </div>
             <div class="film-details__info">
