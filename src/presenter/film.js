@@ -14,13 +14,13 @@ export default class Film {
   constructor(filmListContainer, changeData, changeMode, api) {
     this._filmListContainer = filmListContainer;
     this._changeData = changeData;
-    this._changeMode = changeMode;
 
+    this._scrollPosition = null;
     this._api = api;
 
-    this._commentsModel = new CommentsModel();
-
     this._filmComponent = null;
+    this._popup = null;
+
     this._mode = Mode.CLOSED;
 
     this._handleOpenClick = this._handleOpenClick.bind(this);
@@ -29,27 +29,21 @@ export default class Film {
     this._handleWatchListClick = this._handleWatchListClick.bind(this);
     this._handleAsWatchedListClick = this._handleAsWatchedListClick.bind(this);
     this._handleFavoriteListClick = this._handleFavoriteListClick.bind(this);
-    this._handleUpdateComments = this._handleUpdateComments.bind(this);
+    this._handleAddComment = this._handleAddComment.bind(this);
     this._handleDeleteComment = this._handleDeleteComment.bind(this);
+    this._handleModelEvents = this._handleModelEvents.bind(this);
+
+    this._handlePopupFavoriteClick = this._handlePopupFavoriteClick.bind(this);
+    this._handlePopupAlreadyWatchedClick = this._handlePopupAlreadyWatchedClick.bind(this);
+    this._handlePopupWatchListClick = this._handlePopupWatchListClick.bind(this);
+
+    this._commentsModel = new CommentsModel();
+    this._commentsModel.addObserver(this._handleModelEvents);
   }
 
   init(film) {
     this.film = film;
     const prevFilmComponent = this._filmComponent;
-    const prevFilmDetails = this._popup;
-
-    this._api.getComments(this.film)
-      .then((comments) => {
-        this._commentsModel.setComments(comments);
-      })
-      .catch(() => {
-        this._commentsModel.setComments([]);
-      })
-      .then(() => {
-        this.film.comments = this._commentsModel.getComments();
-        this._popup = new FilmDetailsView(film);
-        this._setPopUpHandlers();
-      });
 
     this._filmComponent = new FilmCardView(film);
     this._filmComponent.setFilmPosterClickHandler(this._handleOpenClick);
@@ -60,26 +54,22 @@ export default class Film {
     this._filmComponent.setFilmAsWatchedClickHandler(this._handleAsWatchedListClick);
     this._filmComponent.setFilmFavoriteClickHandler(this._handleFavoriteListClick);
 
-    if (prevFilmComponent === null || prevFilmDetails === null) {
+    if (prevFilmComponent === null) {
       render(this._filmListContainer, this._filmComponent, RenderPosition.BEFOREEND);
       return;
     }
 
-    if (this._mode === Mode.CLOSED) {
-      replace(this._filmComponent, prevFilmComponent);
-    }
-
     if (this._mode === Mode.OPENED) {
+      this._onShowModal();
       replace(this._filmComponent, prevFilmComponent);
-      replace(this._popup, prevFilmDetails);
     }
 
     remove(prevFilmComponent);
-    remove(prevFilmDetails);
   }
 
   destroy() {
     remove(this._filmComponent);
+    remove(this._popup);
   }
 
   resetView() {
@@ -88,36 +78,45 @@ export default class Film {
     }
   }
 
-  _onCloseModal(update) {
-    const isObjectChanged = (this.film.isFilmInWatchList !== update.isFilmInWatchList ||
-      this.film.isFilmInAlreadyWatch !== update.isFilmInAlreadyWatch ||
-      this.film.isFilmInFavorite !== update.isFilmInFavorite) ? true : ``;
-
-    if (isObjectChanged) {
-      this._changeData(
-          UserAction.UPDATE,
-          UpdateType.MAJOR,
-          update
-      );
-    }
-
-    this._popup.getElement().remove(this._popup.getElement());
-    this._popup.removeElement();
-    this._popup.removeEscapePressHandler();
+  _onCloseModal() {
+    remove(this._popup);
     document.body.classList.remove(`hide-overflow`);
 
     this._mode = Mode.CLOSED;
   }
 
-  _handleClose(update) {
-    this._onCloseModal(update);
+  _handleClose() {
+    this._onCloseModal();
   }
 
   _onShowModal() {
-    document.body.classList.add(`hide-overflow`);
-    render(document.body, this._popup, RenderPosition.BEFOREEND);
-    this._changeMode();
     this._mode = Mode.OPENED;
+    const prevFilmDetails = this._popup;
+    const filmId = this.film.id;
+
+    this._api.getComments(filmId)
+      .then((comments) => {
+        this._commentsModel.setComments(comments);
+        this.film.comments = this._commentsModel.getComments();
+        this._popup = new FilmDetailsView(this.film);
+        this._setPopUpHandlers();
+
+        document.body.classList.add(`hide-overflow`);
+
+        if (prevFilmDetails !== null && document.body.contains(prevFilmDetails.getElement())) {
+          replace(this._popup, prevFilmDetails);
+          this._restoreScrollPosition();
+        } else {
+          render(document.body, this._popup, RenderPosition.BEFOREEND);
+        }
+      })
+      .catch(() => {
+        this._commentsModel.setComments([]);
+      });
+  }
+
+  _restoreScrollPosition() {
+    this._popup.getElement().scroll(0, this._scrollPosition);
   }
 
   _handleOpenClick() {
@@ -128,76 +127,179 @@ export default class Film {
     this._popup.setEscapePressHandler(this._handleClose);
     this._popup.setCloseCrossClickHandler(this._handleClose);
     this._popup.setDeleteComment(this._handleDeleteComment);
-    this._popup.setSubmitCommentHandler(this._handleUpdateComments);
+    this._popup.setSubmitCommentHandler(this._handleAddComment);
+
+    this._popup.setFavoriteClickHandler(this._handlePopupFavoriteClick);
+    this._popup.setAsWatchedClickHandler(this._handlePopupAlreadyWatchedClick);
+    this._popup.setWatchListClickHandler(this._handlePopupWatchListClick);
+  }
+
+  _handlePopupWatchListClick(scrollPosition) {
+    this._scrollPosition = scrollPosition;
+
+    this._changeData(
+        UserAction.UPDATE_FILM,
+        UpdateType.MINOR,
+        Object.assign(
+            {},
+            this.film,
+            {
+              isFilmInWatchList: !this.film.isFilmInWatchList,
+              comments: this._commentsModel.getComments().map((item) => item)
+            }
+        )
+    );
+
+    this._restoreScrollPosition();
+  }
+
+  _handlePopupAlreadyWatchedClick(scrollPosition) {
+    this._scrollPosition = scrollPosition;
+
+    this._changeData(
+        UserAction.UPDATE_FILM,
+        UpdateType.MINOR,
+        Object.assign(
+            {},
+            this.film,
+            {
+              isFilmInAlreadyWatch: !this.film.isFilmInAlreadyWatch,
+              comments: this._commentsModel.getComments().map((item) => item)
+            }
+        )
+    );
+
+    this._restoreScrollPosition();
+  }
+
+  _handlePopupFavoriteClick(scrollPosition) {
+    this._scrollPosition = scrollPosition;
+
+    this._changeData(
+        UserAction.UPDATE_FILM,
+        UpdateType.MINOR,
+        Object.assign(
+            {},
+            this.film,
+            {
+              isFilmInFavorite: !this.film.isFilmInFavorite,
+              comments: this._commentsModel.getComments().map((item) => item)
+            }
+        )
+    );
+
+    this._restoreScrollPosition();
   }
 
   _handleWatchListClick() {
     this._changeData(
-        UserAction.UPDATE,
+        UserAction.UPDATE_FILM,
         UpdateType.MAJOR,
         Object.assign(
             {},
             this.film,
-            {isFilmInWatchList: !this.film.isFilmInWatchList}
+            {
+              isFilmInWatchList: !this.film.isFilmInWatchList,
+              comments: this._commentsModel.getComments().map((item) => item)
+            }
         )
     );
   }
 
   _handleAsWatchedListClick() {
     this._changeData(
-        UserAction.UPDATE,
+        UserAction.UPDATE_FILM,
         UpdateType.MAJOR,
         Object.assign(
             {},
             this.film,
-            {isFilmInAlreadyWatch: !this.film.isFilmInAlreadyWatch}
+            {
+              isFilmInAlreadyWatch: !this.film.isFilmInAlreadyWatch,
+              comments: this._commentsModel.getComments().map((item) => item)
+            }
         )
     );
   }
 
   _handleFavoriteListClick() {
     this._changeData(
-        UserAction.UPDATE,
+        UserAction.UPDATE_FILM,
         UpdateType.MAJOR,
         Object.assign(
             {},
             this.film,
-            {isFilmInFavorite: !this.film.isFilmInFavorite}
+            {
+              isFilmInFavorite: !this.film.isFilmInFavorite,
+              comments: this._commentsModel.getComments().map((item) => item)
+            }
         )
     );
   }
 
-  _handleUpdateComments(comment, scrollPosition) {
-  // В след задании будет обновление комментареви.
-  // const serverComment = generateComment();
-  // const newComment = Object.assign(
-  //     {},
-  //     serverComment,
-  //     comment
-  // );
+  _handleAddComment(comment, scrollPosition) {
+    const filmId = this.film.id;
+    this._scrollPosition = scrollPosition;
 
-    // this._commentsModel.addComment(this._commentsModel.getComments(), newComment);
-    this.film.comments = this._commentsModel.getComments();
+    this._popup.updateData({
+      isDisabled: true
+    });
 
-    this._changeData(
-        UserAction.UPDATE,
-        UpdateType.MINOR,
-        this.film
-    );
+    this._api.addComment(comment, filmId)
+      .then((comments) => {
+        const lastComment = comments.comments[comments.comments.length - 1];
+        this._commentsModel.addComment(UserAction.UPDATE_COMMENT, lastComment);
+      })
+      .catch(() => {
+        this.setAborting();
+      });
 
-    this._popup.getElement().scroll(0, scrollPosition);
+    this._restoreScrollPosition();
   }
 
   _handleDeleteComment(commentId, scrollPosition) {
-    this.film.comments = this._commentsModel.getComments();
-    this._commentsModel.deleteComment(this.film.comments, commentId);
+    this._popup.updateData({
+      isDisabled: true,
+      deletedId: commentId
+    });
 
-    this._changeData(
-        UserAction.UPDATE,
-        UpdateType.MINOR,
-        this.film
-    );
+    this._api.deleteComment(commentId)
+      .then(() => {
+        this._commentsModel.deleteComment(UserAction.UPDATE_COMMENT, commentId);
+      })
+      .catch(() => {
+        this.setAborting();
+      });
 
-    this._popup.getElement().scroll(0, scrollPosition);
+    this._scrollPosition = scrollPosition;
+  }
+
+  _handleModelEvents(userAction) {
+    switch (userAction) {
+      case UserAction.UPDATE_COMMENT:
+        this._changeData(
+            UserAction.UPDATE_FILM,
+            UpdateType.MINOR,
+            Object.assign(
+                {},
+                this.film,
+                {
+                  comments: this._commentsModel.getComments().map((item) => item)
+                }
+            )
+        );
+        break;
+    }
+  }
+
+  setAborting() {
+    const resetPopupState = () => {
+      this._popup.updateData({
+        isDisabled: false,
+        isDeleting: false,
+        deletedId: null
+      });
+    };
+
+    this._popup.shake(resetPopupState);
   }
 }

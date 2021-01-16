@@ -14,9 +14,8 @@ export const DateType = {
 };
 
 export const UserAction = {
-  UPDATE: `UPDATE`,
-  ADD: `ADD`,
-  DELETE: `DELETE`,
+  UPDATE_FILM: `UPDATE_FILM`,
+  UPDATE_COMMENT: `UPDATE_COMMENT`,
 };
 
 export const UpdateType = {
@@ -63,4 +62,3 @@ export const UserRank = {
     rankName: `movie buff`
   }
 };
-

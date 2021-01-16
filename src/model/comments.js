@@ -53,4 +53,12 @@ export default class Comments extends Observer {
 
     return adaptedComment;
   }
+
+  static adaptToServer(comment) {
+    return {
+      comment: comment.commentText,
+      date: new Date() instanceof Date ? new Date().toISOString() : null,
+      emotion: comment.emoji
+    };
+  }
 }
