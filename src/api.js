@@ -3,7 +3,9 @@ import CommentsModel from "./model/comments";
 
 const Method = {
   GET: `GET`,
-  PUT: `PUT`
+  PUT: `PUT`,
+  POST: `POST`,
+  DELETE: `DELETE`
 };
 
 const SuccessHTTPStatusRange = {
@@ -23,12 +25,6 @@ export default class Api {
       .then((films) => films.map(FilmsModel.adaptToClient));
   }
 
-  getComments(film) {
-    return this._load({url: `comments/${film.id}`})
-      .then(Api.toJSON)
-      .then((comments) => comments.map(CommentsModel.adaptToClient));
-  }
-
   updateFilm(film) {
     return this._load({
       url: `movies/${film.id}`,
@@ -38,6 +34,30 @@ export default class Api {
     })
       .then(Api.toJSON)
       .then(FilmsModel.adaptToClient);
+  }
+
+  getComments(id) {
+    return this._load({url: `comments/${id}`})
+      .then(Api.toJSON)
+      .then((comments) => comments.map(CommentsModel.adaptToClient));
+  }
+
+  addComment(comment, id) {
+    return this._load({
+      url: `comments/${id}`,
+      method: Method.POST,
+      body: JSON.stringify(CommentsModel.adaptToServer(comment)),
+      headers: new Headers({"Content-Type": `application/json`})
+    })
+      .then(Api.toJSON)
+      .then(CommentsModel.adaptToClient);
+  }
+
+  deleteComment(filmId) {
+    return this._load({
+      url: `comments/${filmId}`,
+      method: Method.DELETE
+    });
   }
 
   _load({

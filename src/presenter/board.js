@@ -15,11 +15,12 @@ import UserTitle from "../view/user-title";
 const FILM_LIST_COUNT_STEP = 5;
 
 export default class Board {
-  constructor(boardContainer, siteHeaderContainer, filmsModel, filterModel, api) {
+  constructor(boardContainer, siteHeaderContainer, filmsModel, filterModel, commentModel, api) {
     this._boardContainer = boardContainer;
     this._siteHeaderContainer = siteHeaderContainer;
     this._filmsModel = filmsModel;
     this._filterModel = filterModel;
+    this._commentModel = commentModel;
     this._renderFilmsCount = FILM_LIST_COUNT_STEP;
     this._filmPresenter = {};
 
@@ -165,7 +166,7 @@ export default class Board {
 
   _handleViewAction(actionType, updateType, update) {
     switch (actionType) {
-      case UserAction.UPDATE:
+      case UserAction.UPDATE_FILM:
         this._api.updateFilm(update)
           .then((response) => {
             this._filmsModel.updateFilm(updateType, response);
