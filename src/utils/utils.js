@@ -53,3 +53,6 @@ export const getRandomIndexRange = (from, array) => {
   return array[randomIndex];
 };
 
+export const isOnline = () => {
+  return window.navigator.onLine;
+};

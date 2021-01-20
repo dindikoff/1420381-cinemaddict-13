@@ -4,6 +4,8 @@ import FilmDetailsView from "../view/popup.js";
 import {render, replace, remove, RenderPosition} from "../utils/dom-utils.js";
 import {UserAction, UpdateType} from "../const.js";
 import CommentsModel from "../model/comments";
+import {isOnline} from "../utils/utils";
+import {toast} from "../utils/toast/toast.js";
 
 const Mode = {
   CLOSED: `CLOSED`,
@@ -44,8 +46,11 @@ export default class Film {
   init(film) {
     this.film = film;
     const prevFilmComponent = this._filmComponent;
+    const prevFilmDetails = this._popup;
 
     this._filmComponent = new FilmCardView(film);
+    this._popup = new FilmDetailsView(film, this._commentsModel.getComments());
+
     this._filmComponent.setFilmPosterClickHandler(this._handleOpenClick);
     this._filmComponent.setFilmTitleClickHandler(this._handleOpenClick);
     this._filmComponent.setFilmCommentsClickHandler(this._handleOpenClick);
@@ -53,6 +58,8 @@ export default class Film {
     this._filmComponent.setFilmWatchListClickHandler(this._handleWatchListClick);
     this._filmComponent.setFilmAsWatchedClickHandler(this._handleAsWatchedListClick);
     this._filmComponent.setFilmFavoriteClickHandler(this._handleFavoriteListClick);
+
+    this._setPopUpHandlers();
 
     if (prevFilmComponent === null) {
       render(this._filmListContainer, this._filmComponent, RenderPosition.BEFOREEND);
@@ -65,6 +72,9 @@ export default class Film {
     }
 
     remove(prevFilmComponent);
+    remove(prevFilmDetails);
+
+    this._restoreScrollPosition();
   }
 
   destroy() {
@@ -82,6 +92,19 @@ export default class Film {
     remove(this._popup);
     document.body.classList.remove(`hide-overflow`);
 
+    this._changeData(
+        UserAction.UPDATE_FILM,
+        UpdateType.MAJOR,
+        Object.assign(
+            {},
+            this.film,
+            {
+              comments: this._commentsModel.getComments().map((item) => item)
+            }
+        )
+
+    );
+
     this._mode = Mode.CLOSED;
   }
 
@@ -90,29 +113,7 @@ export default class Film {
   }
 
   _onShowModal() {
-    this._mode = Mode.OPENED;
-    const prevFilmDetails = this._popup;
-    const filmId = this.film.id;
-
-    this._api.getComments(filmId)
-      .then((comments) => {
-        this._commentsModel.setComments(comments);
-        this.film.comments = this._commentsModel.getComments();
-        this._popup = new FilmDetailsView(this.film);
-        this._setPopUpHandlers();
-
-        document.body.classList.add(`hide-overflow`);
-
-        if (prevFilmDetails !== null && document.body.contains(prevFilmDetails.getElement())) {
-          replace(this._popup, prevFilmDetails);
-          this._restoreScrollPosition();
-        } else {
-          render(document.body, this._popup, RenderPosition.BEFOREEND);
-        }
-      })
-      .catch(() => {
-        this._commentsModel.setComments([]);
-      });
+    render(document.body, this._popup, RenderPosition.BEFOREEND);
   }
 
   _restoreScrollPosition() {
@@ -120,7 +121,21 @@ export default class Film {
   }
 
   _handleOpenClick() {
-    this._onShowModal();
+    if (isOnline()) {
+      this._api.getComments(this.film.id)
+        .then((comments) => {
+          this._commentsModel.setComments(comments);
+        })
+        .then(() => {
+          this.init(this.film);
+          this._onShowModal();
+        })
+        .catch(() => this._commentsModel.setComments([]));
+    } else {
+      this._onShowModal();
+    }
+    this._setPopUpHandlers();
+    this._mode = Mode.OPENED;
   }
 
   _setPopUpHandlers() {
@@ -237,26 +252,44 @@ export default class Film {
   }
 
   _handleAddComment(comment, scrollPosition) {
-    const filmId = this.film.id;
-    this._scrollPosition = scrollPosition;
-
     this._popup.updateData({
-      isDisabled: true
+      isDisabled: true,
+      isDeleting: false
     });
 
-    this._api.addComment(comment, filmId)
-      .then((comments) => {
-        const lastComment = comments.comments[comments.comments.length - 1];
-        this._commentsModel.addComment(UserAction.UPDATE_COMMENT, lastComment);
-      })
-      .catch(() => {
-        this.setAborting();
-      });
+    this._api.addComment(this.film, comment)
+        .then((response) => {
+          const commentsList = response.comments.map((item) => CommentsModel.adaptToClient(item));
+          this._commentsModel.setComments(commentsList);
+          this._changeData(
+              UserAction.UPDATE_FILM,
+              UpdateType.MINOR,
+              Object.assign(
+                  {},
+                  this.film,
+                  {
+                    comments: response.comments
+                  }
+              )
+          );
+        })
+        .catch(() => {
+          this.setAborting();
+        });
+
+
+    this._scrollPosition = scrollPosition;
 
     this._restoreScrollPosition();
   }
 
   _handleDeleteComment(commentId, scrollPosition) {
+    if (!isOnline()) {
+      toast(`You can't delete comment offline`);
+      this._popup.shake();
+      return;
+    }
+
     this._popup.updateData({
       isDisabled: true,
       deletedId: commentId

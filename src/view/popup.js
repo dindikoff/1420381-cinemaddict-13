@@ -1,10 +1,9 @@
 import SmartView from './smart.js';
-import {formatReleaseDate, formatCommentDate, getTimeFromMins, isEscape, isEnter} from '../utils/utils.js';
+import {formatCommentDate, formatReleaseDate, getTimeFromMins, isEnter, isEscape, isOnline} from '../utils/utils.js';
 import he from 'he';
 
-const generateCommentTemplate = (comment, isDeleting) => {
-  return (`
-    <li class="film-details__comment" id="${comment.id}"">
+const generateCommentTemplate = (comment, isDeleting = false) => {
+  return (`<li class="film-details__comment" id="${comment.id}"">
       <span class="film-details__comment-emoji">
   ${comment.emoji ? `<img src="./images/emoji/${comment.emoji}.png" width="55" height="55" alt="emoji-${comment.emoji}">`
       : ``}</span>
@@ -16,25 +15,20 @@ const generateCommentTemplate = (comment, isDeleting) => {
           <button class="film-details__comment-delete" ${isDeleting ? `disabled` : ``}>${isDeleting ? `Deleting…` : `Delete`}</button>
         </p>
       </div>
-    </li>
-  `).trim();
+    </li>`).trim();
 };
 
 const generateCommentsBlockTemplate = (comments, isEmoji, emojiName, commentText, isDisabled, isDeleting, deletedId) => {
   const commentItems = comments.map((comment) => {
-    if (comment.id === deletedId) {
-      return (generateCommentTemplate(comment, true));
-    } else {
-      return generateCommentTemplate(comment, false);
-    }
-
+    return comment.id === deletedId ? (generateCommentTemplate(comment, true)) :
+      generateCommentTemplate(comment, false);
   }).join(``);
 
   return (`
     <section class="film-details__comments-wrap">
       <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${comments.length}</span></h3>
       <ul class="film-details__comments-list">
-        ${commentItems}
+        ${isOnline() ? commentItems : `Loading...`}
       </ul>
 
       <div class="film-details__new-comment">
@@ -71,7 +65,7 @@ const generateCommentsBlockTemplate = (comments, isEmoji, emojiName, commentText
   `);
 };
 
-const createFilmDetailsTemplate = (data) => {
+const createFilmDetailsTemplate = (data, comments) => {
   const {
     title, originalTitle,
     director, writers,
@@ -79,7 +73,7 @@ const createFilmDetailsTemplate = (data) => {
     country, pg,
     poster, rating,
     duration, genre,
-    description, comments,
+    description,
     isFilmInWatchList, isFilmInAlreadyWatch,
     isFilmInFavorite, isEmoji,
     emojiName, commentText,
@@ -178,10 +172,10 @@ const createFilmDetailsTemplate = (data) => {
 };
 
 export default class Popup extends SmartView {
-  constructor(film) {
+  constructor(film, comments = []) {
     super();
     this._data = Popup.parseFilmToData(film);
-
+    this._comments = comments;
     this._scrollPosition = 0;
 
     this._closeCrossClickHandler = this._closeCrossClickHandler.bind(this);
@@ -201,7 +195,7 @@ export default class Popup extends SmartView {
   }
 
   getTemplate() {
-    return createFilmDetailsTemplate(this._data);
+    return createFilmDetailsTemplate(this._data, this._comments);
   }
 
   _closeCrossClickHandler(evt) {
