@@ -10,13 +10,12 @@ export default class Comments extends Observer {
     this._comments = comments.slice();
   }
 
-  addComment(updateType, update) {
+  addComment(update) {
     this._comments = [
       ...this._comments,
       update
     ];
 
-    this._notify(updateType, update);
   }
 
   deleteComment(updateType, id) {
