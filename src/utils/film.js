@@ -36,4 +36,10 @@ export const sortByRating = (filmA, filmB) => {
   return dayjs(filmB.rating).diff(dayjs(filmA.rating));
 };
 
-export const generateId = () => Date.now() + parseInt(Math.random() * 10000, 10);
+export const getTopRatedFilms = (films) => {
+  return films.slice().sort((a, b) => b.rating - a.rating);
+};
+
+export const getMostCommented = (films) => {
+  return films.slice().sort((a, b) => b.comments.length - a.comments.length);
+};

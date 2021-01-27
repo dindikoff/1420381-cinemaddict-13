@@ -62,3 +62,15 @@ export const UserRank = {
     rankName: `movie buff`
   }
 };
+
+export const FeatureBlock = {
+  'COMMENT': {
+    'NAME': `COMMENT`,
+    'SIZE': 2
+  },
+  'RATING': {
+    'NAME': `RATING`,
+    'SIZE': 2
+  }
+};
+
