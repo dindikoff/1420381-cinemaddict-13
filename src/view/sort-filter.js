@@ -11,7 +11,7 @@ const createSortFilterTemplate = (currentSortType) => {
   `).trim();
 };
 
-export default class Sort extends AbstractView {
+export default class SortFilter extends AbstractView {
   constructor(currentSortType) {
     super();
     this._currentSortType = currentSortType;

@@ -1,11 +1,10 @@
 import {UserRank} from '../const';
-
-const {getWatchedList} = require(`./statistcs`);
+import {getWatchedList} from './statistics';
 
 export const getUserRank = (films) => {
   const filmLength = getWatchedList(films).length;
 
-  if (filmLength > UserRank.MOVIE_BUFF.filmsCount) {
+  if (filmLength >= UserRank.MOVIE_BUFF.filmsCount) {
     return UserRank.MOVIE_BUFF.rankName;
   } else if (filmLength > UserRank.NOVICE.filmsCount) {
     return UserRank.FAN.rankName;

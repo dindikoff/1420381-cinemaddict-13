@@ -11,22 +11,16 @@ export const isEnter = (evt) => {
   return (evt.key === `Enter` && (evt.ctrlKey || evt.metaKey));
 };
 
-export const getRandomInteger = (a = 0, b = 1) => {
-  const lower = Math.ceil(Math.min(a, b));
-  const upper = Math.floor(Math.max(a, b));
+export const getRandomInteger = (from = 0, to = 1) => {
+  const lower = Math.ceil(Math.min(from, to));
+  const upper = Math.floor(Math.max(from, to));
 
   return Math.floor(lower + Math.random() * (upper - lower + 1));
 };
 
-export const getRandomFloat = (a = 1, b = 0) => {
-  const lower = Math.min(a, b);
-  const upper = Math.max(a, b);
-  return lower + Math.random() * (upper - lower);
-};
-
-export const getTimeFromMins = (mins, separate = false) => {
-  let hours = Math.trunc(mins / 60);
-  let minutes = mins % 60;
+export const getTimeFromMins = (time, separate = false) => {
+  const hours = Math.trunc(time / 60);
+  const minutes = time % 60;
 
   if (separate) {
     return {

@@ -18,7 +18,7 @@ export default class Comments extends Observer {
 
   }
 
-  deleteComment(updateType, id) {
+  deleteComment(id) {
     const index = this._comments.findIndex((comment) => parseInt(comment.id, 10) === parseInt(id, 10));
     if (index === -1) {
       throw new Error(`Can't delete nonexistent comment`);
@@ -28,8 +28,6 @@ export default class Comments extends Observer {
       ...this._comments.slice(0, index),
       ...this._comments.slice(index + 1)
     ];
-
-    this._notify(updateType);
   }
 
   getComments() {

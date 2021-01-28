@@ -6,7 +6,7 @@ export const getWatchedList = (filmsList) => {
   return filmsList.filter((film) => film.isFilmInAlreadyWatch === true);
 };
 
-export const totalDurationStats = (films) => {
+export const getTotalDurationStats = (films) => {
   let durationStats = 0;
 
   getWatchedList(films).forEach((film) => {
@@ -19,23 +19,24 @@ export const totalDurationStats = (films) => {
   };
 };
 
-const topGenreStats = (films) => {
-  let combinedGenreList = [];
+const getTopGenreStats = (films) => {
+  const combinedGenreList = [];
   getWatchedList(films).forEach((item) => {
     item.genre.forEach((genreItem) => {
       combinedGenreList.push(genreItem);
     });
   });
 
-  const countGenreObj = combinedGenreList.reduce((acc, el) => {
-    acc[el] = (acc[el] || 0) + 1;
-    return acc;
+  const countGenres = combinedGenreList.reduce((accumulator, currentValue) => {
+    accumulator[currentValue] = (accumulator[currentValue] || 0) + 1;
+    return accumulator;
   }, {});
 
   const sortGenres = {};
-  Object.keys(countGenreObj).sort((a, b) =>
-    countGenreObj[b] - countGenreObj[a]).forEach((key) => {
-    sortGenres[key] = countGenreObj[key];
+
+  Object.keys(countGenres).sort((genreA, genreB) =>
+    countGenres[genreB] - countGenres[genreA]).forEach((key) => {
+    sortGenres[key] = countGenres[key];
   });
 
   return {
@@ -44,7 +45,7 @@ const topGenreStats = (films) => {
   };
 };
 
-export const genresFilter = (data) => {
+export const filterGenres = (data) => {
   const {films, filter} = data;
   let sortedGenres;
 
@@ -72,10 +73,10 @@ export const genresFilter = (data) => {
   }
 
   return {
-    SORT_GENRES: topGenreStats(sortedGenres).SORT_GENRES,
+    SORT_GENRES: getTopGenreStats(sortedGenres).SORT_GENRES,
     FILMS_COUNT: sortedGenres.length,
-    TOP_GENRE: topGenreStats(sortedGenres).TOP_GENRE,
-    DURATION: totalDurationStats(sortedGenres)
+    TOP_GENRE: getTopGenreStats(sortedGenres).TOP_GENRE,
+    DURATION: getTotalDurationStats(sortedGenres)
   };
 };
 

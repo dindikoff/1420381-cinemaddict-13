@@ -234,7 +234,7 @@ export default class Popup extends SmartView {
     evt.preventDefault();
     this._scrollPosition = this.getElement().scrollTop;
 
-    this._callback.popupWatchListClick(this._scrollPosition);
+    this._callback.popupWatchListClick(this._scrollPosition, this._comments);
   }
 
   setWatchListClickHandler(cb) {
@@ -247,7 +247,7 @@ export default class Popup extends SmartView {
     evt.preventDefault();
     this._scrollPosition = this.getElement().scrollTop;
 
-    this._callback.popupAsWatchedClick(this._scrollPosition);
+    this._callback.popupAsWatchedClick(this._scrollPosition, this._comments);
   }
 
   setAsWatchedClickHandler(cb) {
@@ -260,7 +260,7 @@ export default class Popup extends SmartView {
     evt.preventDefault();
     this._scrollPosition = this.getElement().scrollTop;
 
-    this._callback.popupFavoriteClick(this._scrollPosition);
+    this._callback.popupFavoriteClick(this._scrollPosition, this._comments);
   }
 
   setFavoriteClickHandler(cb) {
@@ -326,13 +326,10 @@ export default class Popup extends SmartView {
   _deleteCommentHandler(evt) {
     evt.preventDefault();
 
-    // evt.target.textContent = `Deleting`;
-    // evt.target.disabled = true;
-
     this._scrollPosition = this.getElement().scrollTop;
 
     const clickedId = evt.target.parentElement.parentElement.parentElement.id;
-    this._callback.deleteComment(clickedId, this._scrollPosition);
+    this._callback.deleteComment(clickedId, this._scrollPosition, this._comments);
   }
 
   static parseFilmToData(film) {

@@ -33,20 +33,17 @@ export default class Film {
     this._handleFavoriteListClick = this._handleFavoriteListClick.bind(this);
     this._handleAddComment = this._handleAddComment.bind(this);
     this._handleDeleteComment = this._handleDeleteComment.bind(this);
-    this._handleModelEvents = this._handleModelEvents.bind(this);
 
     this._handlePopupFavoriteClick = this._handlePopupFavoriteClick.bind(this);
     this._handlePopupAlreadyWatchedClick = this._handlePopupAlreadyWatchedClick.bind(this);
     this._handlePopupWatchListClick = this._handlePopupWatchListClick.bind(this);
 
     this._commentsModel = new CommentsModel();
-    this._commentsModel.addObserver(this._handleModelEvents);
   }
 
   init(film) {
     this.film = film;
     const prevFilmComponent = this._filmComponent;
-    const prevFilmDetails = this._popup;
 
     this._filmComponent = new FilmCardView(film);
     this._popup = new FilmDetailsView(film, this._commentsModel.getComments());
@@ -59,20 +56,22 @@ export default class Film {
     this._filmComponent.setFilmAsWatchedClickHandler(this._handleAsWatchedListClick);
     this._filmComponent.setFilmFavoriteClickHandler(this._handleFavoriteListClick);
 
-    this._setPopUpHandlers();
-
     if (prevFilmComponent === null) {
       render(this._filmListContainer, this._filmComponent, RenderPosition.BEFOREEND);
       return;
     }
 
-    if (this._mode === Mode.OPENED) {
-      this._onShowModal();
+    if (this._filmListContainer.contains(prevFilmComponent.getElement())) {
       replace(this._filmComponent, prevFilmComponent);
     }
 
+    if (this._mode === Mode.OPENED) {
+      const oldPopup = document.querySelector(`.film-details`);
+      this._onShowModal();
+      replace(this._popup, oldPopup);
+    }
+
     remove(prevFilmComponent);
-    remove(prevFilmDetails);
 
     this._restoreScrollPosition();
   }
@@ -106,6 +105,7 @@ export default class Film {
     );
 
     this._mode = Mode.CLOSED;
+    this._popup.removeEscapePressHandler();
   }
 
   _handleClose() {
@@ -114,6 +114,7 @@ export default class Film {
 
   _onShowModal() {
     render(document.body, this._popup, RenderPosition.BEFOREEND);
+    this._setPopUpHandlers();
   }
 
   _restoreScrollPosition() {
@@ -134,7 +135,7 @@ export default class Film {
     } else {
       this._onShowModal();
     }
-    this._setPopUpHandlers();
+
     this._mode = Mode.OPENED;
   }
 
@@ -149,8 +150,9 @@ export default class Film {
     this._popup.setWatchListClickHandler(this._handlePopupWatchListClick);
   }
 
-  _handlePopupWatchListClick(scrollPosition) {
+  _handlePopupWatchListClick(scrollPosition, comments) {
     this._scrollPosition = scrollPosition;
+    this._commentsModel.setComments(comments);
 
     this._changeData(
         UserAction.UPDATE_FILM,
@@ -168,8 +170,9 @@ export default class Film {
     this._restoreScrollPosition();
   }
 
-  _handlePopupAlreadyWatchedClick(scrollPosition) {
+  _handlePopupAlreadyWatchedClick(scrollPosition, comments) {
     this._scrollPosition = scrollPosition;
+    this._commentsModel.setComments(comments);
 
     this._changeData(
         UserAction.UPDATE_FILM,
@@ -187,8 +190,9 @@ export default class Film {
     this._restoreScrollPosition();
   }
 
-  _handlePopupFavoriteClick(scrollPosition) {
+  _handlePopupFavoriteClick(scrollPosition, comments) {
     this._scrollPosition = scrollPosition;
+    this._commentsModel.setComments(comments);
 
     this._changeData(
         UserAction.UPDATE_FILM,
@@ -283,7 +287,9 @@ export default class Film {
     this._restoreScrollPosition();
   }
 
-  _handleDeleteComment(commentId, scrollPosition) {
+  _handleDeleteComment(commentId, scrollPosition, comments) {
+    this._commentsModel.setComments(comments);
+
     if (!isOnline()) {
       toast(`You can't delete comment offline`);
       this._popup.shake();
@@ -295,20 +301,12 @@ export default class Film {
       deletedId: commentId
     });
 
+
     this._api.deleteComment(commentId)
       .then(() => {
-        this._commentsModel.deleteComment(UserAction.UPDATE_COMMENT, commentId);
+        this._commentsModel.deleteComment(commentId);
       })
-      .catch(() => {
-        this.setAborting();
-      });
-
-    this._scrollPosition = scrollPosition;
-  }
-
-  _handleModelEvents(userAction) {
-    switch (userAction) {
-      case UserAction.UPDATE_COMMENT:
+      .then(() => {
         this._changeData(
             UserAction.UPDATE_FILM,
             UpdateType.MINOR,
@@ -320,8 +318,12 @@ export default class Film {
                 }
             )
         );
-        break;
-    }
+      })
+      .catch(() => {
+        this.setAborting();
+      });
+
+    this._scrollPosition = scrollPosition;
   }
 
   setAborting() {

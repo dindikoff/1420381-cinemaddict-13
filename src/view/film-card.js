@@ -15,7 +15,7 @@ const createFilmCardTemplate = (film) => {
 
   const generateShortDescriptionTemplate = () => {
     return description.length >= SHORT_DESCRIPTION_MAX_LETTERS
-      ? description.substring(0, SHORT_DESCRIPTION_MAX_LETTERS)
+      ? description.substring(0, SHORT_DESCRIPTION_MAX_LETTERS) + `...`
       : description;
   };
 

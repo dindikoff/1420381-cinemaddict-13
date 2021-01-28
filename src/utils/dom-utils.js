@@ -55,18 +55,6 @@ export const remove = (component) => {
   component.removeElement();
 };
 
-export const removeChild = (parent, child) => {
-  if (child instanceof Abstract) {
-    child = child.getElement();
-  }
-
-  if (parent === null || child === null) {
-    throw new Error(`Can't remove unexisting elements.`);
-  }
-
-  parent.removeChild(child);
-};
-
 export const createElement = (template) => {
   const newElement = document.createElement(`div`);
   newElement.innerHTML = template;

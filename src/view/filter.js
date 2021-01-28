@@ -22,7 +22,7 @@ const createMainNavigationTemplate = (filtersItem, currentFilterType, currentSta
   `).trim();
 };
 
-export default class FilterView extends AbstractView {
+export default class Filter extends AbstractView {
   constructor(filters, currentFilterType, currentStatusPage) {
     super();
     this._filters = filters;

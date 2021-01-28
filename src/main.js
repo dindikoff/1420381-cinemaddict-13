@@ -5,13 +5,14 @@ import FilmsModel from './model/movies.js';
 import FilterModel from './model/filter.js';
 import CommentsModel from './model/comments.js';
 import {remove, render, RenderPosition} from './utils/dom-utils.js';
+import {toast} from './utils/toast/toast.js';
 
 import Store from './api/store.js';
 import Provider from './api/provider.js';
 
 
 import {MenuStats, UpdateType} from './const.js';
-import StatsView from './view/site-menu.js';
+import StatsView from './view/stats.js';
 
 const AUTHORIZATION = `Basic fsdf23fsddfsfdsf3fsdfsdfsdf5fgsdgdfgdHEs`;
 const END_POINT = `https://13.ecmascript.pages.academy/cinemaddict/`;
@@ -78,4 +79,5 @@ window.addEventListener(`online`, () => {
 
 window.addEventListener(`offline`, () => {
   document.title += ` [offline]`;
+  toast(`Lost connection`);
 });

@@ -2,11 +2,11 @@ import Smart from './smart';
 import {StatsFilter} from '../const.js';
 import Chart from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
-import {genresFilter} from '../utils/statistcs.js';
+import {filterGenres} from '../utils/statistics.js';
 import {getUserRank} from '../utils/title.js';
 
 const renderChart = (statisticCtx, data) => {
-  const sortedGenres = genresFilter(data).SORT_GENRES;
+  const sortedGenres = filterGenres(data).SORT_GENRES;
   const BAR_HEIGHT = 50;
   statisticCtx.height = BAR_HEIGHT * Object.keys(sortedGenres).length;
 
@@ -98,16 +98,16 @@ const createStats = (data) => {
     <ul class="statistic__text-list">
       <li class="statistic__text-item">
         <h4 class="statistic__item-title">You watched</h4>
-        <p class="statistic__item-text">${genresFilter(data).FILMS_COUNT} <span class="statistic__item-description">movies</span></p>
+        <p class="statistic__item-text">${filterGenres(data).FILMS_COUNT} <span class="statistic__item-description">movies</span></p>
       </li>
       <li class="statistic__text-item">
         <h4 class="statistic__item-title">Total duration</h4>
-        <p class="statistic__item-text">${genresFilter(data).DURATION.HOURS} <span class="statistic__item-description">h</span> ${genresFilter(data).DURATION.MINUTES} <span class="statistic__item-description">m</span></p>
+        <p class="statistic__item-text">${filterGenres(data).DURATION.HOURS} <span class="statistic__item-description">h</span> ${filterGenres(data).DURATION.MINUTES} <span class="statistic__item-description">m</span></p>
       </li>
       <li class="statistic__text-item">
         <h4 class="statistic__item-title">Top genre</h4>
         <p class="statistic__item-text">
-            ${genresFilter(data).TOP_GENRE ? genresFilter(data).TOP_GENRE : ``}
+            ${filterGenres(data).TOP_GENRE ? filterGenres(data).TOP_GENRE : ``}
         </p>
       </li>
     </ul>
