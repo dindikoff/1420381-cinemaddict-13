@@ -21,6 +21,7 @@ export const UserAction = {
 export const UpdateType = {
   MINOR: `MINOR`,
   MAJOR: `MAJOR`,
+  GRAND: `GRAND`,
   INIT: `INIT`,
 };
 
