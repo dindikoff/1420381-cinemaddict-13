@@ -33,7 +33,7 @@ export const sortByRating = (filmA, filmB) => {
     return weight;
   }
 
-  return dayjs(filmB.rating).diff(dayjs(filmA.rating));
+  return filmB.rating - filmA.rating;
 };
 
 export const getTopRatedFilms = (films, size) => {
