@@ -24,6 +24,8 @@ export default class Board {
     this._filterModel = filterModel;
     this._renderFilmsCount = FILM_LIST_COUNT_STEP;
     this._filmPresenter = {};
+    this._commentPresenter = {};
+    this._ratedListPresenter = {};
     this._filmPresenters = [];
     this._topCommentedList = null;
     this._topRatedListComponent = null;
@@ -148,8 +150,11 @@ export default class Board {
 
   _clearFilmList({resetRenderedFilmsCount = false, resetSortType = false} = {}) {
     const filmsCount = this._getFilms().length;
-    this._filmPresenters.forEach((presenter) => presenter.destroy());
-    this._filmPresenters = [];
+    Object.values(this._filmPresenter).forEach((presenter) => {
+      presenter.destroy();
+    });
+
+    this._filmPresenter = {};
 
     remove(this._sortComponent);
     remove(this._emptyListComponent);
@@ -206,17 +211,16 @@ export default class Board {
     render(this._boardContainer, this._loadingComponent, RenderPosition.AFTERBEGIN);
   }
 
-  _renderFilm(container, film) {
+  _renderFilm(container, film, presenter) {
     const filmPresenter = new FilmPresenter(container, this._handleViewAction, this._handleModelChange, this._api);
     filmPresenter.init(film);
 
-    this._filmPresenters.push(filmPresenter);
-    this._filmPresenter[film.id] = filmPresenter;
+    presenter[film.id] = filmPresenter;
   }
 
   _renderFilms(films) {
     const filmsListElementContainer = this._filmListComponent.getElement().querySelector(`.films-list__container`);
-    films.forEach((film) => this._renderFilm(filmsListElementContainer, film));
+    films.forEach((film) => this._renderFilm(filmsListElementContainer, film, this._filmPresenter));
   }
 
   _renderBoard() {
@@ -247,13 +251,13 @@ export default class Board {
     this._renderTopCommentList(films);
   }
 
-  _renderFeatureBlock(films, container) {
+  _renderFeatureBlock(films, container, presenter) {
     if (films.length > 0) {
       render(this._filmComponent, container, RenderPosition.BEFOREEND);
       const topListContainer = container.getElement().querySelector(`.films-list__container`);
 
       films.forEach((film) => {
-        this._renderFilm(topListContainer, film);
+        this._renderFilm(topListContainer, film, presenter);
       });
     }
   }
@@ -266,7 +270,8 @@ export default class Board {
     this._topRatedListComponent = new TopRatedListView();
     this._renderFeatureBlock(
         getTopRatedFilms(films, FeatureBlock.RATING.SIZE),
-        this._topRatedListComponent
+        this._topRatedListComponent,
+        this._ratedListPresenter
     );
   }
 
@@ -279,7 +284,8 @@ export default class Board {
 
     this._renderFeatureBlock(
         getMostCommented(films, FeatureBlock.COMMENT.SIZE),
-        this._topCommentedList
+        this._topCommentedList,
+        this._commentPresenter
     );
   }
 }
