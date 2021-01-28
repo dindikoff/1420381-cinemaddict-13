@@ -1,9 +1,9 @@
-import Smart from "./smart";
-import {StatsFilter} from "../const";
-import Chart from "chart.js";
+import Smart from './smart';
+import {StatsFilter} from '../const.js';
+import Chart from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
-import {genresFilter} from "../utils/statistcs";
-import {getUserRank} from "../utils/title";
+import {genresFilter} from '../utils/statistcs.js';
+import {getUserRank} from '../utils/title.js';
 
 const renderChart = (statisticCtx, data) => {
   const sortedGenres = genresFilter(data).SORT_GENRES;

@@ -1,4 +1,4 @@
-import {createElement} from "../utils/dom-utils.js";
+import {createElement} from '../utils/dom-utils.js';
 
 const SHAKE_ANIMATION_TIMEOUT = 600;
 

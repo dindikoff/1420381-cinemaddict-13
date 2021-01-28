@@ -1,5 +1,5 @@
-import AbstractView from "./abstract.js";
-import {formatReleaseDate, getTimeFromMins} from "../utils/utils";
+import AbstractView from './abstract.js';
+import {formatReleaseDate, getTimeFromMins} from '../utils/utils';
 
 const createFilmCardTemplate = (film) => {
   const SHORT_DESCRIPTION_MAX_LETTERS = 140;

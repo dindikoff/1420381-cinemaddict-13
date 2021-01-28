@@ -1,6 +1,6 @@
-import dayjs from "dayjs";
+import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
-import {KEY, DateType} from "../const.js";
+import {KEY, DateType} from '../const.js';
 dayjs.extend(relativeTime);
 
 export const isEscape = (evt) => {

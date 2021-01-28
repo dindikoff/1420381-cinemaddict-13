@@ -10,8 +10,8 @@ import Store from './api/store.js';
 import Provider from './api/provider.js';
 
 
-import {MenuStats, UpdateType} from "./const";
-import StatsView from "./view/site-menu";
+import {MenuStats, UpdateType} from './const.js';
+import StatsView from './view/site-menu.js';
 
 const AUTHORIZATION = `Basic fsdf23fsddfsfdsf3fsdfsdfsdf5fgsdgdfgdHEs`;
 const END_POINT = `https://13.ecmascript.pages.academy/cinemaddict/`;

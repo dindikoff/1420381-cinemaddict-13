@@ -1,4 +1,4 @@
-import {UserRank} from "../const";
+import {UserRank} from '../const';
 
 const {getWatchedList} = require(`./statistcs`);
 

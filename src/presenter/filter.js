@@ -1,7 +1,7 @@
-import FilterView from "../view/filter.js";
-import {remove, render, RenderPosition, replace} from "../utils/dom-utils.js";
-import {FilterType, MenuStats, UpdateType} from "../const.js";
-import {filter} from "../utils/filter.js";
+import FilterView from '../view/filter.js';
+import {remove, render, RenderPosition, replace} from '../utils/dom-utils.js';
+import {FilterType, MenuStats, UpdateType} from '../const.js';
+import {filter} from '../utils/filter.js';
 
 export default class Filter {
   constructor(filterContainer, filterModel, filmsModel, changeMenuState) {

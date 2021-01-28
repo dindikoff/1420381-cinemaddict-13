@@ -1,5 +1,5 @@
 import AbstractView from './abstract.js';
-import {getUserRank} from "../utils/title";
+import {getUserRank} from '../utils/title.js';
 
 const createUserTitleTemplate = (films) => {
   if (getUserRank(films) === UserTitle.NEW) {

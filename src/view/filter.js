@@ -1,5 +1,5 @@
-import AbstractView from "./abstract.js";
-import {MenuStats} from "../const";
+import AbstractView from './abstract.js';
+import {MenuStats} from '../const';
 
 const createMainNavigationItemTemplate = (filter, currentFilterType, currentStatusPage) => {
   const {type, name, count} = filter;

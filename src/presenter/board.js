@@ -1,7 +1,7 @@
 import FilmsView from '../view/films.js';
 import FilmListView from '../view/film-list.js';
 import EmptyList from '../view/film-list-empty.js';
-import LoadingView from "../view/loading.js";
+import LoadingView from '../view/loading.js';
 import ShowMoreButtonView from '../view/show-more-button.js';
 import SortView from '../view/sort-filter.js';
 import TopRatedListView from '../view/top-rated-list.js';
@@ -9,10 +9,10 @@ import MostCommentedList from '../view/most-commented-list.js';
 import FilmPresenter from './film.js';
 
 import {render, remove, RenderPosition} from '../utils/dom-utils.js';
-import {sortByYear, sortByRating, getTopRatedFilms, getMostCommented} from "../utils/film.js";
+import {sortByYear, sortByRating, getTopRatedFilms, getMostCommented} from '../utils/film.js';
 import {FeatureBlock, SortType, UpdateType, UserAction} from "../const.js";
 import {filter} from '../utils/filter.js';
-import UserTitle from "../view/user-title";
+import UserTitle from '../view/user-title.js';
 
 const FILM_LIST_COUNT_STEP = 5;
 
@@ -243,20 +243,14 @@ export default class Board {
     this._renderTopCommentList(films);
   }
 
-  _renderFeatureBlock(films, container, type, elementCount) {
-    render(this._filmComponent, container, RenderPosition.BEFOREEND);
-    const topListContainer = container.getElement().querySelector(`.films-list__container`);
+  _renderFeatureBlock(films, container) {
+    if (films.length > 0) {
+      render(this._filmComponent, container, RenderPosition.BEFOREEND);
+      const topListContainer = container.getElement().querySelector(`.films-list__container`);
 
-
-    for (let i = 0; i < elementCount; i++) {
-      switch (type) {
-        case FeatureBlock.COMMENT.NAME:
-          this._renderFilm(topListContainer, getMostCommented(films)[i]);
-          break;
-        case FeatureBlock.RATING.NAME:
-          this._renderFilm(topListContainer, getTopRatedFilms(films)[i]);
-          break;
-      }
+      films.forEach((film) => {
+        this._renderFilm(topListContainer, film);
+      });
     }
   }
 
@@ -267,10 +261,8 @@ export default class Board {
 
     this._topRatedListComponent = new TopRatedListView();
     this._renderFeatureBlock(
-        films,
-        this._topRatedListComponent,
-        FeatureBlock.RATING.NAME,
-        FeatureBlock.RATING.SIZE
+        getTopRatedFilms(films, FeatureBlock.RATING.SIZE),
+        this._topRatedListComponent
     );
   }
 
@@ -280,11 +272,10 @@ export default class Board {
     }
 
     this._topCommentedList = new MostCommentedList();
+
     this._renderFeatureBlock(
-        films,
-        this._topCommentedList,
-        FeatureBlock.COMMENT.NAME,
-        FeatureBlock.COMMENT.SIZE
+        getMostCommented(films, FeatureBlock.COMMENT.SIZE),
+        this._topCommentedList
     );
   }
 }
