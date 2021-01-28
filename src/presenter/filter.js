@@ -50,7 +50,7 @@ export default class Filter {
       return;
     }
 
-    this._filterModel.setFilter(UpdateType.MAJOR, filterType);
+    this._filterModel.setFilter(UpdateType.GRAND, filterType);
     this._changeMenuState(MenuStats.MOVIES);
     this._currentStatusPage = MenuStats.MOVIES;
     this.init();

@@ -187,7 +187,11 @@ export default class Board {
         this._filmPresenter[data.id].init(data);
         break;
       case UpdateType.MAJOR:
-        this._clearFilmList({resetRenderedFilmsCount: false, resetSortType: true});
+        this._clearFilmList({resetRenderedFilmsCount: false, resetSortType: false});
+        this._renderBoard();
+        break;
+      case UpdateType.GRAND:
+        this._clearFilmList({resetRenderedFilmsCount: true, resetSortType: true});
         this._renderBoard();
         break;
       case UpdateType.INIT:
