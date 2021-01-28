@@ -1,6 +1,6 @@
-import {getTimeFromMins} from "./utils";
-import dayjs from "dayjs";
-import {StatsFilter} from "../const";
+import {getTimeFromMins} from './utils.js';
+import dayjs from 'dayjs';
+import {StatsFilter} from '../const';
 
 export const getWatchedList = (filmsList) => {
   return filmsList.filter((film) => film.isFilmInAlreadyWatch === true);

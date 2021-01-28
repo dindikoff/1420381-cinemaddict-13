@@ -1,11 +1,11 @@
-import FilmCardView from "../view/film-card.js";
-import FilmDetailsView from "../view/popup.js";
+import FilmCardView from '../view/film-card.js';
+import FilmDetailsView from '../view/popup.js';
 
-import {render, replace, remove, RenderPosition} from "../utils/dom-utils.js";
-import {UserAction, UpdateType} from "../const.js";
-import CommentsModel from "../model/comments";
-import {isOnline} from "../utils/utils";
-import {toast} from "../utils/toast/toast.js";
+import {render, replace, remove, RenderPosition} from '../utils/dom-utils.js';
+import {UserAction, UpdateType} from '../const.js';
+import CommentsModel from '../model/comments.js';
+import {isOnline} from '../utils/utils.js';
+import {toast} from '../utils/toast/toast.js';
 
 const Mode = {
   CLOSED: `CLOSED`,

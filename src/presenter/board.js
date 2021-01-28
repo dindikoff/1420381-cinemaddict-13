@@ -1,7 +1,7 @@
 import FilmsView from '../view/films.js';
 import FilmListView from '../view/film-list.js';
 import EmptyList from '../view/film-list-empty.js';
-import LoadingView from "../view/loading.js";
+import LoadingView from '../view/loading.js';
 import ShowMoreButtonView from '../view/show-more-button.js';
 import SortView from '../view/sort-filter.js';
 import TopRatedListView from '../view/top-rated-list.js';
@@ -9,10 +9,10 @@ import MostCommentedList from '../view/most-commented-list.js';
 import FilmPresenter from './film.js';
 
 import {render, remove, RenderPosition} from '../utils/dom-utils.js';
-import {sortByYear, sortByRating, getTopRatedFilms, getMostCommented} from "../utils/film.js";
+import {sortByYear, sortByRating, getTopRatedFilms, getMostCommented} from '../utils/film.js';
 import {FeatureBlock, SortType, UpdateType, UserAction} from "../const.js";
 import {filter} from '../utils/filter.js';
-import UserTitle from "../view/user-title";
+import UserTitle from '../view/user-title.js';
 
 const FILM_LIST_COUNT_STEP = 5;
 
