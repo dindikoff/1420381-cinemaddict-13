@@ -26,7 +26,6 @@ export default class Board {
     this._filmPresenter = {};
     this._commentPresenter = {};
     this._ratedListPresenter = {};
-
     this._topCommentedList = null;
     this._topRatedListComponent = null;
 
